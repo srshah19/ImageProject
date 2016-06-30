@@ -20,6 +20,9 @@ import {
     Text,
     View,
     TouchableHighlight,
+    ToolbarAndroid,
+    RefreshControl,
+    ProgressBar,
 } from 'react-native';
 
 var cacheResults = {
@@ -36,7 +39,8 @@ class ImageProject extends Component {
                 rowHasChanged: (row1, row2) => row1 !== row2
             }),
             loaded: false,
-            count: 1
+            count: 1,
+            refreshing: false
         };
         this.REQUEST_URL = 'https://api.unsplash.com/photos/curated/?client_id=79990a4b9b7eb74767c53ed17a039d2046a191f9a4fc33bd853ad272b7e4d199&per_page=15';
     }
@@ -62,29 +66,54 @@ class ImageProject extends Component {
                     dataSource: this.getDataSource(cacheResults.data['results']),
                     loaded: true,
                     count: this.state.count + 1,
+                    refreshing: false,
                 });
+            })
+            .catch((error) => {
+              Alert.alert('Network Error', 'Make sure you have a valid internet connection.')
+              console.warn(error);
             })
             .done();
     }
 
     getDataSource(responseData): ListView.DataSource {
-      return this.state.dataSource.cloneWithRows(responseData)
+        return this.state.dataSource.cloneWithRows(responseData)
     }
 
     loadMore() {
-      this.setState({
-        loaded: false
-      })
-      this.fetchData();
+        this.setState({
+          loaded: false,
+          refreshing: true,
+        })
+        this.fetchData();
+    }
+
+    getPageHeader(){
+        return(
+          <View style={styles.headerContainer}>
+            <ToolbarAndroid
+              style={styles.toolbarDisplay}
+              titleColor='#fff'
+              title={'Unsplash Images'}
+            />
+          </View>
+        )
     }
 
     render() {
         return (
             <ListView
+                refreshControl={
+                  <RefreshControl
+                      refreshing={this.state.refreshing}
+                      onRefresh={this.loadMore.bind(this)}
+                  />
+                }
                 dataSource={this.state.dataSource}
                 renderRow={this.renderMovie}
                 style={styles.listView}
                 onEndReachedThreshold={10}
+                renderHeader={() => this.getPageHeader()}
                 onEndReached={this.loadMore.bind(this)}>
             </ListView>
         );
@@ -127,8 +156,7 @@ var styles = StyleSheet.create({
         justifyContent: 'center',
         alignItems: 'center',
         backgroundColor: '#F5F5F5',
-        margin: 10,
-        padding: 10
+        margin: 10
     },
     rightContainer: {
         flex: 1
@@ -152,7 +180,7 @@ var styles = StyleSheet.create({
         height: 81
     },
     listView: {
-        paddingTop: 20,
+        paddingBottom: 20,
         marginBottom: 0,
         backgroundColor: '#FFFFFF'
     },
@@ -164,7 +192,17 @@ var styles = StyleSheet.create({
       opacity: 0.5,
       backgroundColor: 'black',
       width: 300
-    }
+    },
+    toolbarDisplay: {
+      backgroundColor: '#8c8c8c',
+      height: 50,
+      margin: 0,
+      padding: 0
+    },
+    headerContainer: {
+      flex: 1,
+      flexDirection: 'column'
+    },
 });
 
 AppRegistry.registerComponent('ImageProject', () => ImageProject);
