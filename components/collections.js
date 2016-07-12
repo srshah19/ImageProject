@@ -26,7 +26,6 @@ import {
     RefreshControl,
     ProgressBar,
     NetInfo,
-    Dimensions,
 } from 'react-native';
 
 var cacheResults = {
@@ -35,16 +34,16 @@ var cacheResults = {
   }
 }
 
+var ScrollableTabView = require('react-native-scrollable-tab-view');
+
 // Shhh.. This is a secret Key! Keep this safe :D
 const API_KEY = "79990a4b9b7eb74767c53ed17a039d2046a191f9a4fc33bd853ad272b7e4d199";
-var width = Dimensions.get('window').width; //full width
-var height = Dimensions.get('window').height; //full height
 
 String.prototype.capitalizeFirstLetter = function() {
     return this.charAt(0).toUpperCase() + this.slice(1);
 }
 
-class ImageProject extends Component {
+class Collections extends Component {
     constructor(props) {
         super(props);
         this.state = {
@@ -55,7 +54,7 @@ class ImageProject extends Component {
             count: 1,
             refreshing: false
         };
-        this.REQUEST_URL = 'https://api.unsplash.com/photos/curated/?client_id='+API_KEY+'&per_page=5';
+        this.REQUEST_URL = 'https://api.unsplash.com/collections/featured/?client_id='+API_KEY+'&per_page=5';
     }
 
     componentDidMount() {
@@ -104,18 +103,6 @@ class ImageProject extends Component {
         this.fetchData();
     }
 
-    getPageHeader(){
-        return(
-          <View style={styles.headerContainer}>
-            <ToolbarAndroid
-              style={styles.toolbarDisplay}
-              titleColor='#fff'
-              title={'Unsplash Images'}
-            />
-          </View>
-        )
-    }
-
     render() {
         return (
             <ListView
@@ -126,32 +113,28 @@ class ImageProject extends Component {
                   />
                 }
                 dataSource={this.state.dataSource}
-                renderRow={this.renderMovie}
+                renderRow={this.renderCollection}
                 style={styles.listView}
                 onEndReachedThreshold={10}
-                renderHeader={() => this.getPageHeader()}
                 onEndReached={this.loadMore.bind(this)}>
             </ListView>
         );
     }
 
-    renderMovie(image) {
+    renderCollection(collection) {
         return (
             <View style={styles.container}>
                 <TouchableHighlight style={styles.imageContainer}
-                    onPress={() => Linking.openURL(image.urls.full)}
                     activeOpacity={0.5}>
                     <Image
-                      resizeMode="cover"
-                      source={{uri: image.urls.regular}}
+                      resizeMode='contain'
+                      source={{uri: collection.cover_photo.urls.regular}}
                       style={styles.thumbnail}
                     />
                 </TouchableHighlight>
                 <View style={styles.rightContainer}>
-                  <View>
-                    <Text style={styles.title}>{image.user.username.capitalizeFirstLetter()}</Text>
-                    <Text style={styles.content}>Likes: {image.likes}</Text>
-                  </View>
+                  <Text style={styles.title}>{collection.title.capitalizeFirstLetter()}</Text>
+                  <Text style={styles.description}>{collection.description}</Text>
                 </View>
             </View>
         );
@@ -164,55 +147,63 @@ var styles = StyleSheet.create({
       flexDirection: 'column',
       justifyContent: 'center',
       alignItems: 'center',
-      backgroundColor: '#F5F5F5',
+      backgroundColor: 'transparent',
       margin: 10,
-      padding: 10
+      padding: 10,
+      borderBottomWidth: 1,
+      borderBottomColor: 'gray'
     },
     rightContainer: {
       flex: 1,
-      marginTop: 10
+      position: 'absolute',
+      top: 25,
+      right: 0,
+      bottom: 0,
+      left: 0
     },
 	imageContainer: {
       flex: 1,
+      opacity: 0.5,
 	},
     title: {
       fontSize: 16,
       marginBottom: 3,
       textAlign: 'center',
-      color: '#000000',
-      fontWeight: 'bold'
+      color: '#FFFFFF',
+      fontWeight: 'normal',
+      fontFamily: 'quicksand_bold'
     },
     content: {
       fontSize: 14,
       textAlign: 'center',
-      marginTop: 2
+      marginTop: 2,
+      color: '#FFFFFF',
+      fontFamily: 'quicksand_regular'
     },
     year: {
-      textAlign: 'center'
+       textAlign: 'center'
     },
     thumbnail: {
-      width: width - 40,
+      width: 450,
       height: 250
     },
     listView: {
       paddingBottom: 20,
       marginBottom: 0,
-      backgroundColor: '#FFFFFF'
+      backgroundColor: '#000000'
     },
-    overlay: {
-      flex: 1,
-      position: 'absolute',
-      left: 0,
-      top: 0,
-      opacity: 0.5,
-      backgroundColor: 'black',
-      width: 300
+    description: {
+      fontSize: 14,
+      textAlign: 'center',
+      marginTop: 5,
+      color: '#FFFFFF',
+      fontFamily: 'quicksand_regular'
     },
     toolbarDisplay: {
       backgroundColor: '#8c8c8c',
       height: 50,
       margin: 0,
-      padding: 0
+      padding: 0,
     },
     headerContainer: {
       flex: 1,
@@ -220,4 +211,4 @@ var styles = StyleSheet.create({
     },
 });
 
-AppRegistry.registerComponent('ImageProject', () => ImageProject);
+export default Collections;
