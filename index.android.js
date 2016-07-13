@@ -48,6 +48,7 @@ class ImageProject extends Component {
         return (
           <ScrollableTabView 
             tabBarUnderlineColor="red"
+            tabBarTextStyle={{fontFamily: 'quicksand_regular', fontSize: 15}}
             style={styles.tabDisplay}>
             <CuratedImg tabLabel="Curated" />
             <Collection tabLabel="Collections" />
@@ -58,7 +59,7 @@ class ImageProject extends Component {
 
 var styles = StyleSheet.create({
   tabDisplay: {
-    marginBottom: 3,
+    marginBottom: 0,
   }
 })
 AppRegistry.registerComponent('ImageProject', () => ImageProject);

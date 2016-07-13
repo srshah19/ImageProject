@@ -134,7 +134,7 @@ class Collections extends Component {
                 </TouchableHighlight>
                 <View style={styles.rightContainer}>
                   <Text style={styles.title}>{collection.title.capitalizeFirstLetter()}</Text>
-                  <Text style={styles.description}>{collection.description}</Text>
+                  <Text style={styles.description}>{(collection.description) ? collection.description: 'N/A'}</Text>
                 </View>
             </View>
         );
@@ -154,12 +154,15 @@ var styles = StyleSheet.create({
       borderBottomColor: 'gray'
     },
     rightContainer: {
+//       flex: 0.5,
+//       flexDirection: 'row',
+//       position: 'absolute',
+//       top: 25,
+//       right: 0,
+//       bottom: 0,
+//       left: 0
       flex: 1,
-      position: 'absolute',
-      top: 25,
-      right: 0,
-      bottom: 0,
-      left: 0
+      marginTop: 10,
     },
 	imageContainer: {
       flex: 1,
@@ -197,7 +200,9 @@ var styles = StyleSheet.create({
       textAlign: 'center',
       marginTop: 5,
       color: '#FFFFFF',
-      fontFamily: 'quicksand_regular'
+      fontFamily: 'quicksand_regular',
+      flex: 0.5,
+      flexDirection: 'column'
     },
     toolbarDisplay: {
       backgroundColor: '#8c8c8c',
