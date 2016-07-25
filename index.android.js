@@ -26,6 +26,7 @@ import {
     RefreshControl,
     ProgressBar,
     NetInfo,
+    Navigator,
 } from 'react-native';
 
 import CuratedImg from './components/curated.js';
@@ -46,7 +47,7 @@ class ImageProject extends Component {
 
     render() {
         return (
-          <ScrollableTabView 
+          <ScrollableTabView
             tabBarUnderlineColor="red"
             tabBarTextStyle={{fontFamily: 'quicksand_regular', fontSize: 15}}
             style={styles.tabDisplay}>
