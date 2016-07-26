@@ -26,8 +26,8 @@ import {
     RefreshControl,
     ProgressBar,
     NetInfo,
-		Navigator,
-		BackAndroid,
+    Navigator,
+    BackAndroid,
 } from 'react-native';
 
 import CuratedSingleImg from './singleimage.js';
@@ -127,12 +127,12 @@ class CuratedImg extends Component {
         )
     }
 
-		navSingle(image) {
-			this.props.navigator.push({
-				id: 'single',
-				data: {img: image}
-			})
-		}
+    navSingle(image) {
+      this.props.navigator.push({
+        id: 'single',
+        data: {img: image}
+      })
+    }
 
     render() {
         return (
@@ -166,7 +166,7 @@ class CuratedImg extends Component {
                 </TouchableHighlight>
                 <View style={styles.rightContainer}>
                     <Text style={styles.title}>{image.user.username.capitalizeFirstLetter()}</Text>
-		            <Text style={styles.content}>Likes: {image.likes}</Text>
+                    <Text style={styles.content}>Likes: {image.likes}</Text>
                 </View>
             </View>
         );
@@ -174,23 +174,23 @@ class CuratedImg extends Component {
 }
 
 class InitialCurated extends Component {
-		render() {
-		    return (
-		      <Navigator
-		        initialRoute={{id: 'curated'}}
-		        renderScene={this.navigatorRenderScene}/>
-		    );
-		  }
+    render() {
+        return (
+          <Navigator
+            initialRoute={{id: 'curated'}}
+            renderScene={this.navigatorRenderScene}/>
+        );
+      }
 
-		  navigatorRenderScene(route, navigator) {
-		    _navigator = navigator;
-		    switch (route.id) {
-					case 'curated':
-						return (<CuratedImg navigator={navigator} />);
-		      case 'single':
-		        return (<CuratedSingleImg navigator={navigator} data={route.data} title="Single Image"/>);
-		    }
-		  }
+      navigatorRenderScene(route, navigator) {
+        _navigator = navigator;
+        switch (route.id) {
+          case 'curated':
+            return (<CuratedImg navigator={navigator} />);
+          case 'single':
+            return (<CuratedSingleImg navigator={navigator} data={route.data} title="Single Image"/>);
+        }
+      }
 }
 
 var styles = StyleSheet.create({
@@ -209,9 +209,9 @@ var styles = StyleSheet.create({
       flex: 1,
       marginTop: 10
     },
-	imageContainer: {
+  imageContainer: {
       flex: 1,
-	},
+  },
     title: {
       fontSize: 16,
       marginBottom: 3,
