@@ -26,13 +26,27 @@ import {
     RefreshControl,
     ProgressBar,
     NetInfo,
+		Navigator,
+		BackAndroid,
 } from 'react-native';
+
+import CuratedSingleImg from './singleimage.js';
 
 var cacheResults = {
   data: {
     'results': [],
   }
 }
+
+var _navigator; // we fill this up upon on first navigation.
+
+BackAndroid.addEventListener('hardwareBackPress', () => {
+  if (_navigator.getCurrentRoutes().length === 1  ) {
+     return false;
+  }
+  _navigator.pop();
+  return true;
+});
 
 // Shhh.. This is a secret Key! Keep this safe :D
 const API_KEY = "79990a4b9b7eb74767c53ed17a039d2046a191f9a4fc33bd853ad272b7e4d199";
@@ -113,6 +127,13 @@ class CuratedImg extends Component {
         )
     }
 
+		navSingle(image) {
+			this.props.navigator.push({
+				id: 'single',
+				data: {img: image}
+			})
+		}
+
     render() {
         return (
             <ListView
@@ -123,7 +144,7 @@ class CuratedImg extends Component {
                   />
                 }
                 dataSource={this.state.dataSource}
-                renderRow={this.renderMovie}
+                renderRow={this.renderMovie.bind(this)}
                 style={styles.listView}
                 onEndReachedThreshold={10}
                 onEndReached={this.loadMore.bind(this)}>
@@ -135,7 +156,7 @@ class CuratedImg extends Component {
         return (
             <View style={styles.container}>
                 <TouchableHighlight style={styles.imageContainer}
-                    onPress={() => Linking.openURL(image.urls.full)}
+                    onPress={this.navSingle.bind(this, image)}
                     activeOpacity={0.5}>
                     <Image
                       resizeMode='stretch'
@@ -150,6 +171,26 @@ class CuratedImg extends Component {
             </View>
         );
     }
+}
+
+class InitialCurated extends Component {
+		render() {
+		    return (
+		      <Navigator
+		        initialRoute={{id: 'curated'}}
+		        renderScene={this.navigatorRenderScene}/>
+		    );
+		  }
+
+		  navigatorRenderScene(route, navigator) {
+		    _navigator = navigator;
+		    switch (route.id) {
+					case 'curated':
+						return (<CuratedImg navigator={navigator} />);
+		      case 'single':
+		        return (<CuratedSingleImg navigator={navigator} data={route.data} title="Single Image"/>);
+		    }
+		  }
 }
 
 var styles = StyleSheet.create({
@@ -219,4 +260,4 @@ var styles = StyleSheet.create({
     },
 });
 
-export default CuratedImg;
+export default InitialCurated;

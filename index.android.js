@@ -27,6 +27,7 @@ import {
     ProgressBar,
     NetInfo,
     Navigator,
+		BackAndroid,
 } from 'react-native';
 
 import CuratedImg from './components/curated.js';
