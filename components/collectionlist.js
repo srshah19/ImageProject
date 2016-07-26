@@ -26,27 +26,13 @@ import {
     RefreshControl,
     ProgressBar,
     NetInfo,
-    Navigator,
-    BackAndroid,
 } from 'react-native';
-
-import CollectionsList from './collectionlist.js';
 
 var cacheResults = {
   data: {
     'results': [],
   }
 }
-
-var _navigator; // we fill this up upon on first navigation.
-
-BackAndroid.addEventListener('hardwareBackPress', () => {
-  if (_navigator.getCurrentRoutes().length === 1  ) {
-     return false;
-  }
-  _navigator.pop();
-  return true;
-});
 
 var ScrollableTabView = require('react-native-scrollable-tab-view');
 
@@ -66,9 +52,10 @@ class Collections extends Component {
             }),
             loaded: false,
             count: 1,
-            refreshing: false
+            refreshing: false,
+						isLoadMore: false,
         };
-        this.REQUEST_URL = 'https://api.unsplash.com/collections/featured/?client_id='+API_KEY+'&per_page=5';
+        this.REQUEST_URL = 'https://api.unsplash.com/collections/'+this.props.data.col.id+'/photos/?client_id='+API_KEY+'&per_page=5';
     }
 
     componentDidMount() {
@@ -90,12 +77,16 @@ class Collections extends Component {
         fetch(this.requestURL())
             .then((response) => response.json())
             .then((responseData) => {
+							if(!this.state.isLoadMore){
+								cacheResults.data['results'] = [];
+							}
                 cacheResults.data['results'] = cacheResults.data['results'].concat(responseData);
                 this.setState({
                     dataSource: this.getDataSource(cacheResults.data['results']),
                     loaded: true,
                     count: this.state.count + 1,
                     refreshing: false,
+										isLoadMore: true,
                 });
             })
             .catch((error) => {
@@ -113,16 +104,17 @@ class Collections extends Component {
         this.setState({
           loaded: false,
           refreshing: true,
+					isLoadMore: true,
         })
         this.fetchData();
     }
 
-    navCollectionList(collection) {
-      this.props.navigator.push({
-        id: 'collectionslist',
-        data: {col: collection}
-      })
-    }
+        navSingle(image) {
+          this.props.navigator.push({
+            id: 'single',
+            data: {img: image}
+          })
+        }
 
     render() {
         return (
@@ -134,7 +126,7 @@ class Collections extends Component {
                   />
                 }
                 dataSource={this.state.dataSource}
-                renderRow={this.renderCollection.bind(this)}
+                renderRow={this.renderMovie.bind(this)}
                 style={styles.listView}
                 onEndReachedThreshold={10}
                 onEndReached={this.loadMore.bind(this)}>
@@ -142,45 +134,25 @@ class Collections extends Component {
         );
     }
 
-    renderCollection(collection) {
+    renderMovie(image) {
         return (
             <View style={styles.container}>
                 <TouchableHighlight style={styles.imageContainer}
-                  onPress={this.navCollectionList.bind(this, collection)}
-                  activeOpacity={0.5}>
+                    onPress={this.navSingle.bind(this, image)}
+                    activeOpacity={0.5}>
                     <Image
-                      resizeMode='contain'
-                      source={{uri: collection.cover_photo.urls.regular}}
+                      resizeMode='stretch'
+                      source={{uri: image.urls.regular}}
                       style={styles.thumbnail}
                     />
                 </TouchableHighlight>
                 <View style={styles.rightContainer}>
-                  <Text style={styles.title}>{collection.title.capitalizeFirstLetter()}</Text>
-                  <Text style={styles.description}>{(collection.description) ? collection.description: 'N/A'}</Text>
+                    <Text style={styles.title}>{image.user.username.capitalizeFirstLetter()}</Text>
+                    <Text style={styles.content}>Likes: {image.likes}</Text>
                 </View>
             </View>
         );
     }
-}
-
-class InitialCollections extends Component {
-    render() {
-        return (
-          <Navigator
-            initialRoute={{id: 'collections'}}
-            renderScene={this.navigatorRenderScene}/>
-        );
-      }
-
-      navigatorRenderScene(route, navigator) {
-        _navigator = navigator;
-        switch (route.id) {
-          case 'collections':
-            return (<Collections navigator={navigator} />);
-          case 'collectionslist':
-            return (<CollectionsList navigator={navigator} data={route.data} />);
-        }
-      }
 }
 
 var styles = StyleSheet.create({
@@ -197,7 +169,7 @@ var styles = StyleSheet.create({
     },
     rightContainer: {
       flex: 1,
-      marginTop: 10,
+      marginTop: 10
     },
   imageContainer: {
       flex: 1,
@@ -229,14 +201,14 @@ var styles = StyleSheet.create({
       marginBottom: 0,
       backgroundColor: '#000000'
     },
-    description: {
-      fontSize: 14,
-      textAlign: 'center',
-      marginTop: 5,
-      color: '#FFFFFF',
-      fontFamily: 'quicksand_regular',
-      flex: 0.5,
-      flexDirection: 'column'
+    overlay: {
+      flex: 1,
+      position: 'absolute',
+      left: 0,
+      top: 0,
+      opacity: 0.5,
+      backgroundColor: 'black',
+      width: 300
     },
     toolbarDisplay: {
       backgroundColor: '#8c8c8c',
@@ -250,4 +222,4 @@ var styles = StyleSheet.create({
     },
 });
 
-export default InitialCollections;
+export default Collections;

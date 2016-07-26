@@ -26,86 +26,140 @@ import {
     RefreshControl,
     ProgressBar,
     NetInfo,
-		Navigator,
-		CameraRoll,
+    Navigator,
+    CameraRoll,
+    ScrollView,
 } from 'react-native';
-
 
 class SingleImage extends React.Component{
 
-	navBack() {
-		this.props.navigator.pop();
-	}
+  navBack() {
+    this.props.navigator.pop();
+  }
 
-	saveToCamera() {
-		CameraRoll.saveToCameraRoll('https://images.unsplash.com/photo-1468476775582-6bede20f356f', function(data) {
+  saveToCamera() {
+    CameraRoll.saveImageWithTag('https://images.unsplash.com/photo-1468476775582-6bede20f356f', function(data) {
       console.log(data);
     }, function(err) {
       console.log(err);
     });
-	}
+  }
 
   render() {
     return (
-			<View style={styles.mainContainer}>
-				<View style={styles.toolbar}>
-					<Text style={styles.toolbarButton} onPress={this.navBack.bind(this)}>Back</Text>
-					<Text style={styles.toolbarTitle}>{this.props.data.img.user.username.capitalizeFirstLetter()}</Text>
-					<Text style={styles.toolbarButton}>{this.props.data.img.likes} Likes</Text>
+      <ScrollView style={styles.mainContainer}>
+      <View style={styles.container}>
+          <View style={styles.toolbar}>
+            <TouchableHighlight onPress={this.navBack.bind(this)}>
+              <Image
+                source={require('../assets/images/left-arrow.png')}
+                style={styles.smallIcon} />
+            </TouchableHighlight>
+            <Text style={styles.toolbarBack} onPress={this.navBack.bind(this)}>Back</Text>
+          </View>
+          <View style={styles.threeQuarterContainer}>
+            <TouchableHighlight style={styles.imageContainer}
+                onPress={() => Linking.openURL(this.props.data.img.urls.raw)}
+                activeOpacity={0.5}>
+                <Image source={{uri: this.props.data.img.urls.regular}}
+                  style={styles.thumbnail}
+                  resizeMode='stretch' />
+              </TouchableHighlight>
+          </View>
+          <View style={styles.quarterContainer}>
+            <View style={styles.portfolioDetail}>
+              <Image
+                source={{uri: this.props.data.img.user.profile_image.medium}}
+                style={styles.profileImage} />
+                <View style={styles.halfContainer}>
+                  <Text>
+                    <Text style={styles.toolbarTitle}
+                      onPress={() => Linking.openURL(this.props.data.img.user.portfolio_url)}>
+                      By: {this.props.data.img.user.name.capitalizeFirstLetter()}
+                    </Text>
+                    <Text style={styles.toolbarTitle}>
+                      {"\n"}
+                      {this.props.data.img.likes} Likes
+                    </Text>
+                  </Text>
+                </View>
+            </View>
+          </View>
         </View>
-				<View style={styles.content}>
-					<TouchableHighlight style={styles.mainContainer}
-							onPress={this.saveToCamera}
-							activeOpacity={0.5}>
-							<Image source={{uri: this.props.data.img.urls.regular}}
-								style={styles.thumbnail}
-								resizeMode="stretch" />
-						</TouchableHighlight>
-        </View>
-      </View>
+      </ScrollView>
     );
   }
 }
 
 var styles = StyleSheet.create({
-    container: {
+  mainContainer:{
       flex: 1,
-      flexDirection: 'column',
-      justifyContent: 'center',
-      alignItems: 'center',
       backgroundColor: '#000000',
-      margin: 0,
-      padding: 0,
+      flexDirection: 'column'
+  },
+    container: {
+      marginRight: 10,
+      marginLeft: 10,
+      marginTop: 0,
+      marginBottom: 5,
     },
-		thumbnail: {
+    thumbnail: {
       width: 450,
       height: 250
     },
-		toolbar:{
-			backgroundColor: '#000000',
+    toolbar:{
+      backgroundColor: '#000000',
       paddingTop:30,
       paddingBottom:10,
       flexDirection:'row',
+      margin: 10
     },
-    toolbarButton:{
-      width: 50,
-      color:'#fff',
-      textAlign:'center',
-			fontFamily: 'quicksand_regular'
+    toolbarBack: {
+      color: '#FFF',
+      flex: 0.5,
+      fontSize: 16,
+      fontFamily: 'quicksand_regular',
     },
     toolbarTitle:{
-        color:'#fff',
-        textAlign:'center',
-				fontWeight: 'normal',
-        flex:1,
-				fontFamily: 'quicksand_regular',
+      color:'#fff',
+      textAlign:'left',
+      fontWeight: 'normal',
+      flex: 1,
+      fontSize: 18,
+      fontFamily: 'quicksand_regular',
+      margin: 0,
+      padding: 0
     },
-		mainContainer:{
-        flex:1
+    imageContainer: {
+      flex: 1,
+      alignItems: 'center',
     },
-    content:{
-        backgroundColor:'#000000',
-        flex:1,
+    profileImage: {
+      width: 64,
+      borderRadius: 96,
+      height: 64,
+      marginRight: 10,
+    },
+    halfContainer:{
+      flex: 0.5,
+      margin: 10
+    },
+    quarterContainer: {
+      flex: 0.25
+    },
+    threeQuarterContainer: {
+      flex: 0.75,
+      marginBottom: 10,
+    },
+    portfolioDetail: {
+      flex: 1,
+      flexDirection: 'row'
+    },
+    smallIcon: {
+      width: 16,
+      height: 16,
+			marginLeft: 0,
+			marginRight: 5,
     }
 });
 
