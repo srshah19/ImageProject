@@ -26,6 +26,8 @@ import {
     RefreshControl,
     ProgressBar,
     NetInfo,
+    ScrollView,
+    Navigator,
 } from 'react-native';
 
 var cacheResults = {
@@ -53,7 +55,7 @@ class Collections extends Component {
             loaded: false,
             count: 1,
             refreshing: false,
-						isLoadMore: false,
+            isLoadMore: false,
         };
         this.REQUEST_URL = 'https://api.unsplash.com/collections/'+this.props.data.col.id+'/photos/?client_id='+API_KEY+'&per_page=5';
     }
@@ -77,16 +79,16 @@ class Collections extends Component {
         fetch(this.requestURL())
             .then((response) => response.json())
             .then((responseData) => {
-							if(!this.state.isLoadMore){
-								cacheResults.data['results'] = [];
-							}
+              if(!this.state.isLoadMore){
+                cacheResults.data['results'] = [];
+              }
                 cacheResults.data['results'] = cacheResults.data['results'].concat(responseData);
                 this.setState({
                     dataSource: this.getDataSource(cacheResults.data['results']),
                     loaded: true,
                     count: this.state.count + 1,
                     refreshing: false,
-										isLoadMore: true,
+                    isLoadMore: true,
                 });
             })
             .catch((error) => {
@@ -104,10 +106,23 @@ class Collections extends Component {
         this.setState({
           loaded: false,
           refreshing: true,
-					isLoadMore: true,
+          isLoadMore: true,
         })
         this.fetchData();
     }
+
+
+    getPageHeader(){
+      return(
+        <View style={styles.headerContainer}>
+        <ToolbarAndroid
+          style={styles.toolbarDisplay}
+          titleColor='#fff'
+          title={'Collection List'}
+          />
+          </View>
+        )
+      }
 
         navSingle(image) {
           this.props.navigator.push({
@@ -128,6 +143,7 @@ class Collections extends Component {
                 dataSource={this.state.dataSource}
                 renderRow={this.renderMovie.bind(this)}
                 style={styles.listView}
+                renderHeader={() => this.getPageHeader()}
                 onEndReachedThreshold={10}
                 onEndReached={this.loadMore.bind(this)}>
             </ListView>
@@ -141,7 +157,7 @@ class Collections extends Component {
                     onPress={this.navSingle.bind(this, image)}
                     activeOpacity={0.5}>
                     <Image
-                      resizeMode='stretch'
+                      resizeMode='contain'
                       source={{uri: image.urls.regular}}
                       style={styles.thumbnail}
                     />

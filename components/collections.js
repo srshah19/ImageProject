@@ -38,17 +38,18 @@ var cacheResults = {
   }
 }
 
-var _navigator; // we fill this up upon on first navigation.
+var ScrollableTabView = require('react-native-scrollable-tab-view');
+var _navigatorCollections; // we fill this up upon on first navigation.
 
 BackAndroid.addEventListener('hardwareBackPress', () => {
-  if (_navigator.getCurrentRoutes().length === 1  ) {
-     return false;
-  }
-  _navigator.pop();
-  return true;
+	if(_navigatorCollections){
+		if (_navigatorCollections.getCurrentRoutes().length === 1  ) {
+			 return false;
+		}
+		_navigatorCollections.pop();
+		return true;
+	}
 });
-
-var ScrollableTabView = require('react-native-scrollable-tab-view');
 
 // Shhh.. This is a secret Key! Keep this safe :D
 const API_KEY = "79990a4b9b7eb74767c53ed17a039d2046a191f9a4fc33bd853ad272b7e4d199";
@@ -72,9 +73,6 @@ class Collections extends Component {
     }
 
     componentDidMount() {
-      NetInfo.isConnected.fetch().then(isConnected => {
-        // Alert.alert('connected', 'connected', );
-      })
         this.fetchData();
     }
 
@@ -99,8 +97,7 @@ class Collections extends Component {
                 });
             })
             .catch((error) => {
-              Alert.alert('Network Error', 'Make sure you have a valid internet connection.')
-              console.warn(error);
+              Alert.alert('Network Error', 'API request has maxed out. Try again in the next hour.')
             })
             .done();
     }
@@ -164,6 +161,10 @@ class Collections extends Component {
 }
 
 class InitialCollections extends Component {
+  constructor(props) {
+    super(props);
+  }
+
     render() {
         return (
           <Navigator
@@ -173,7 +174,7 @@ class InitialCollections extends Component {
       }
 
       navigatorRenderScene(route, navigator) {
-        _navigator = navigator;
+        _navigatorCollections = navigator;
         switch (route.id) {
           case 'collections':
             return (<Collections navigator={navigator} />);

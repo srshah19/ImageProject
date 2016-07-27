@@ -28,6 +28,7 @@ import {
     NetInfo,
     Navigator,
     BackAndroid,
+		windowSize,
 } from 'react-native';
 
 import CuratedSingleImg from './singleimage.js';
@@ -97,8 +98,7 @@ class CuratedImg extends Component {
                 });
             })
             .catch((error) => {
-              Alert.alert('Network Error', 'Make sure you have a valid internet connection.')
-              console.warn(error);
+              Alert.alert('Network Error', 'API request has maxed out. Try again in the next hour.')
             })
             .done();
     }
@@ -188,7 +188,7 @@ class InitialCurated extends Component {
           case 'curated':
             return (<CuratedImg navigator={navigator} />);
           case 'single':
-            return (<CuratedSingleImg navigator={navigator} data={route.data} title="Single Image"/>);
+            return (<CuratedSingleImg navigator={navigator} data={route.data} />);
         }
       }
 }

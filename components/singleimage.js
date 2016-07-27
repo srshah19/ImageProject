@@ -59,7 +59,7 @@ class SingleImage extends React.Component{
           </View>
           <View style={styles.threeQuarterContainer}>
             <TouchableHighlight style={styles.imageContainer}
-                onPress={() => Linking.openURL(this.props.data.img.urls.raw)}
+                onPress={() => Linking.openURL('https://unsplash.com/photos/'+this.props.data.img.id+'')}
                 activeOpacity={0.5}>
                 <Image source={{uri: this.props.data.img.urls.regular}}
                   style={styles.thumbnail}
@@ -158,8 +158,8 @@ var styles = StyleSheet.create({
     smallIcon: {
       width: 16,
       height: 16,
-			marginLeft: 0,
-			marginRight: 5,
+      marginLeft: 0,
+      marginRight: 5,
     }
 });
 

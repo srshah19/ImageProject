@@ -27,8 +27,8 @@ import {
     BackAndroid,
 } from 'react-native';
 
-import MainView from './components/mainview.js';
-import SplashPage from './components/splashscreen.js';
+import CuratedImg from './curated.js';
+import Collection from './collections.js';
 
 var cacheResults = {
   data: {
@@ -38,28 +38,23 @@ var cacheResults = {
 
 var ScrollableTabView = require('react-native-scrollable-tab-view');
 
-class ImageProject extends Component {
+class MainView extends Component {
     constructor(props) {
         super(props);
     }
 
     render() {
         return (
-          <Navigator
-            initialRoute={{id: 'splash'}}
-            renderScene={this.navigatorRenderScene}/>
+          <ScrollableTabView
+            tabBarUnderlineColor="red"
+            tabBarPosition="bottom"
+            tabBarTextStyle={{fontFamily: 'quicksand_regular', fontSize: 15}}
+            style={styles.tabDisplay}>
+            <CuratedImg tabLabel="Curated" />
+            <Collection tabLabel="Collections" />
+          </ScrollableTabView>
         );
-      }
-
-      navigatorRenderScene(route, navigator) {
-        _navigator = navigator;
-        switch (route.id) {
-          case 'splash':
-            return(<SplashPage navigator={navigator} />);
-          case 'mainView':
-            return (<MainView navigator={navigator} />);
-        }
-      }
+    }
 }
 
 var styles = StyleSheet.create({
@@ -67,4 +62,5 @@ var styles = StyleSheet.create({
     marginBottom: 0,
   }
 })
-AppRegistry.registerComponent('ImageProject', () => ImageProject);
+
+export default MainView;
