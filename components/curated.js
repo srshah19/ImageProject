@@ -25,10 +25,9 @@ import {
     ToolbarAndroid,
     RefreshControl,
     ProgressBar,
-    NetInfo,
     Navigator,
     BackAndroid,
-		windowSize,
+    windowSize,
 } from 'react-native';
 
 import CuratedSingleImg from './singleimage.js';
@@ -71,9 +70,6 @@ class CuratedImg extends Component {
     }
 
     componentDidMount() {
-      NetInfo.isConnected.fetch().then(isConnected => {
-        // Alert.alert('connected', 'connected', );
-      })
         this.fetchData();
     }
 

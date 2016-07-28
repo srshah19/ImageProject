@@ -29,6 +29,7 @@ import {
 
 import CuratedImg from './curated.js';
 import Collection from './collections.js';
+import HeartFloater from './heartstest.js';
 
 var cacheResults = {
   data: {
@@ -52,6 +53,7 @@ class MainView extends Component {
             style={styles.tabDisplay}>
             <CuratedImg tabLabel="Curated" />
             <Collection tabLabel="Collections" />
+            <HeartFloater tabLabel="Hearts" />
           </ScrollableTabView>
         );
     }

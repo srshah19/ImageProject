@@ -9,11 +9,7 @@ import React, {
 
 import Firebase from 'firebase';
 
-// Spinner to show Loading
-import Spinner from 'react-native-loading-spinner-overlay';
-
 import {
-    AppRegistry,
     Alert,
     Image,
     ListView,
@@ -25,7 +21,6 @@ import {
     ToolbarAndroid,
     RefreshControl,
     ProgressBar,
-    NetInfo,
     Navigator,
     CameraRoll,
     ScrollView,

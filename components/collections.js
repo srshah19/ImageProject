@@ -31,6 +31,7 @@ import {
 } from 'react-native';
 
 import CollectionsList from './collectionlist.js';
+import CuratedSingleImg from './singleimage.js';
 
 var cacheResults = {
   data: {
@@ -42,13 +43,13 @@ var ScrollableTabView = require('react-native-scrollable-tab-view');
 var _navigatorCollections; // we fill this up upon on first navigation.
 
 BackAndroid.addEventListener('hardwareBackPress', () => {
-	if(_navigatorCollections){
-		if (_navigatorCollections.getCurrentRoutes().length === 1  ) {
-			 return false;
-		}
-		_navigatorCollections.pop();
-		return true;
-	}
+  if(_navigatorCollections){
+    if (_navigatorCollections.getCurrentRoutes().length === 1  ) {
+       return false;
+    }
+    _navigatorCollections.pop();
+    return true;
+  }
 });
 
 // Shhh.. This is a secret Key! Keep this safe :D
@@ -180,6 +181,8 @@ class InitialCollections extends Component {
             return (<Collections navigator={navigator} />);
           case 'collectionslist':
             return (<CollectionsList navigator={navigator} data={route.data} />);
+          case 'single':
+            return (<CuratedSingleImg navigator={navigator} data={route.data} />);
         }
       }
 }
