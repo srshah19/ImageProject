@@ -58,7 +58,7 @@ class SingleImage extends React.Component{
                 activeOpacity={0.5}>
                 <Image source={{uri: this.props.data.img.urls.regular}}
                   style={styles.thumbnail}
-                  resizeMode='stretch' />
+                  resizeMode='contain' />
               </TouchableHighlight>
           </View>
           <View style={styles.quarterContainer}>
