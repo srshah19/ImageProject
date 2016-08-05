@@ -155,7 +155,7 @@ class CuratedImg extends Component {
                     onPress={this.navSingle.bind(this, image)}
                     activeOpacity={0.5}>
                     <Image
-                      resizeMode='stretch'
+                      resizeMode='contain'
                       source={{uri: image.urls.regular}}
                       style={styles.thumbnail}
                     />
