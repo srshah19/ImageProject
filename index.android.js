@@ -30,14 +30,6 @@ import {
 import MainView from './components/mainview.js';
 import SplashPage from './components/splashscreen.js';
 
-var cacheResults = {
-  data: {
-    'results': [],
-  }
-}
-
-var ScrollableTabView = require('react-native-scrollable-tab-view');
-
 class ImageProject extends Component {
     constructor(props) {
         super(props);
@@ -62,9 +54,4 @@ class ImageProject extends Component {
       }
 }
 
-var styles = StyleSheet.create({
-  tabDisplay: {
-    marginBottom: 0,
-  }
-})
 AppRegistry.registerComponent('ImageProject', () => ImageProject);

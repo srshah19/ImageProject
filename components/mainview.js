@@ -7,8 +7,6 @@ import React, {
     Component,
 } from 'react';
 
-import Firebase from 'firebase';
-
 import {
     AppRegistry,
     Alert,
@@ -31,13 +29,7 @@ import CuratedImg from './curated.js';
 import Collection from './collections.js';
 import HeartFloater from './heartstest.js';
 
-var cacheResults = {
-  data: {
-    'results': [],
-  }
-}
-
-var ScrollableTabView = require('react-native-scrollable-tab-view');
+import ScrollableTabView from 'react-native-scrollable-tab-view';
 
 class MainView extends Component {
     constructor(props) {
@@ -59,10 +51,10 @@ class MainView extends Component {
     }
 }
 
-var styles = StyleSheet.create({
+const styles = StyleSheet.create({
   tabDisplay: {
     marginBottom: 0,
   }
-})
+});
 
 export default MainView;

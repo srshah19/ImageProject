@@ -7,11 +7,6 @@ import React, {
     Component,
 } from 'react';
 
-import Firebase from 'firebase';
-
-// Spinner to show Loading
-import Spinner from 'react-native-loading-spinner-overlay';
-
 import {
     AppRegistry,
     Alert,
@@ -29,16 +24,15 @@ import {
     Dimensions,
 } from 'react-native';
 
-var cacheResults = {
+let cacheResults = {
   data: {
     'results': [],
   }
-}
+};
 
 // Shhh.. This is a secret Key! Keep this safe :D
 const API_KEY = "79990a4b9b7eb74767c53ed17a039d2046a191f9a4fc33bd853ad272b7e4d199";
-var width = Dimensions.get('window').width; //full width
-var height = Dimensions.get('window').height; //full height
+let width = Dimensions.get('window').width; //full width
 
 String.prototype.capitalizeFirstLetter = function() {
     return this.charAt(0).toUpperCase() + this.slice(1);
@@ -61,7 +55,7 @@ class ImageProject extends Component {
     componentDidMount() {
       NetInfo.isConnected.fetch().then(isConnected => {
         // Alert.alert('connected', 'connected', );
-      })
+      });
         this.fetchData();
     }
 
