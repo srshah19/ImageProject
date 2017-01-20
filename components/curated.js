@@ -7,11 +7,6 @@ import React, {
     Component,
 } from 'react';
 
-import Firebase from 'firebase';
-
-// Spinner to show Loading
-import Spinner from 'react-native-loading-spinner-overlay';
-
 import {
     AppRegistry,
     Alert,
@@ -28,17 +23,21 @@ import {
     Navigator,
     BackAndroid,
     windowSize,
+    TouchableOpacity,
+    ToastAndroid,
 } from 'react-native';
 
 import CuratedSingleImg from './singleimage.js';
+import Modal from './modal.js';
+const RNFS = require('react-native-fs');
 
-var cacheResults = {
+let cacheResults = {
   data: {
     'results': [],
   }
-}
+};
 
-var _navigator; // we fill this up upon on first navigation.
+let _navigator; // we fill this up upon on first navigation.
 
 BackAndroid.addEventListener('hardwareBackPress', () => {
   if (_navigator.getCurrentRoutes().length === 1  ) {
@@ -53,7 +52,7 @@ const API_KEY = "79990a4b9b7eb74767c53ed17a039d2046a191f9a4fc33bd853ad272b7e4d19
 
 String.prototype.capitalizeFirstLetter = function() {
     return this.charAt(0).toUpperCase() + this.slice(1);
-}
+};
 
 class CuratedImg extends Component {
     constructor(props) {
@@ -64,7 +63,9 @@ class CuratedImg extends Component {
             }),
             loaded: false,
             count: 1,
-            refreshing: false
+            refreshing: false,
+            path: RNFS.PicturesDirectoryPath + '/Snehal',
+            modalOpen: false,
         };
         this.REQUEST_URL = 'https://api.unsplash.com/photos/curated/?client_id='+API_KEY+'&per_page=5';
     }
@@ -107,20 +108,36 @@ class CuratedImg extends Component {
         this.setState({
           loaded: false,
           refreshing: true,
-        })
+        });
         this.fetchData();
     }
 
-    getPageHeader(){
-        return(
-          <View style={styles.headerContainer}>
-            <ToolbarAndroid
-              style={styles.toolbarDisplay}
-              titleColor='#fff'
-              title={'Unsplash Images'}
-            />
-          </View>
-        )
+    testSaveImage(){
+        let DownloadFileOptions = {
+            fromUrl: this.state.imgInfo['urls']['full'],          // URL to download file from
+            toFile: this.state.path+'/'+this.state.imgInfo['id']+'.jpeg',           // Local filesystem path to save the file to
+            background: true,
+        };
+        RNFS.exists(this.state.path).then((res) => {
+            if(res){
+                RNFS.downloadFile(DownloadFileOptions).promise.then((data) => {
+                    console.log(data);
+                    this.setState({modalOpen: false});
+                    ToastAndroid.show('Image successfully downloaded', ToastAndroid.LONG)
+                });
+            } else{
+                RNFS.mkdir(this.state.path)
+                    .then(() => {
+                        RNFS.downloadFile(DownloadFileOptions).promise.then((data) => {
+                            this.setState({modalOpen: false});
+                            ToastAndroid.show('Image successfully downloaded', ToastAndroid.LONG)
+                        });
+                    })
+            }
+        }).catch(() => {
+            this.setState({modalOpen: false});
+            ToastAndroid.show('Image downloaded unsuccessful. Please close app and try again.', ToastAndroid.LONG)
+        });
     }
 
     navSingle(image) {
@@ -132,19 +149,41 @@ class CuratedImg extends Component {
 
     render() {
         return (
-            <ListView
-                refreshControl={
-                  <RefreshControl
-                      refreshing={this.state.refreshing}
-                      onRefresh={this.loadMore.bind(this)}
-                  />
-                }
-                dataSource={this.state.dataSource}
-                renderRow={this.renderMovie.bind(this)}
-                style={styles.listView}
-                onEndReachedThreshold={10}
-                onEndReached={this.loadMore.bind(this)}>
-            </ListView>
+            <View style={{paddingTop: 20, backgroundColor: '#000'}}>
+                <ListView
+                    refreshControl={
+                      <RefreshControl
+                          refreshing={this.state.refreshing}
+                          onRefresh={this.loadMore.bind(this)}
+                      />
+                    }
+                    dataSource={this.state.dataSource}
+                    renderRow={this.renderMovie.bind(this)}
+                    style={styles.listView}
+                    onEndReachedThreshold={10}
+                    onEndReached={this.loadMore.bind(this)}>
+                </ListView>
+                <Modal
+                    offset={0}
+                    open={this.state.modalOpen}
+                    modalDidOpen={() => console.log('modal did open')}
+                    modalDidClose={() => this.setState({modalOpen: false})}
+                    style={{alignItems: 'center'}}>
+                    <View>
+                        <Text style={{fontSize: 20, marginBottom: 10}}>Image Options</Text>
+                        <TouchableOpacity
+                            style={{margin: 5}}
+                            onPress={this.testSaveImage.bind(this)}>
+                            <Text>Save Image</Text>
+                        </TouchableOpacity>
+                        <TouchableOpacity
+                            style={{margin: 5}}
+                            onPress={() => this.setState({modalOpen: false})}>
+                            <Text>Close modal</Text>
+                        </TouchableOpacity>
+                    </View>
+                </Modal>
+            </View>
         );
     }
 
@@ -153,6 +192,8 @@ class CuratedImg extends Component {
             <View style={styles.container}>
                 <TouchableHighlight style={styles.imageContainer}
                     onPress={this.navSingle.bind(this, image)}
+                    onLongPress={() => this.setState({modalOpen: true, imgInfo: image})}
+                    delayLongPress={800}
                     activeOpacity={0.5}>
                     <Image
                       resizeMode='stretch'
@@ -189,7 +230,7 @@ class InitialCurated extends Component {
       }
 }
 
-var styles = StyleSheet.create({
+const styles = StyleSheet.create({
     container: {
       flex: 1,
       flexDirection: 'column',
@@ -214,14 +255,14 @@ var styles = StyleSheet.create({
       textAlign: 'center',
       color: '#FFFFFF',
       fontWeight: 'normal',
-      fontFamily: 'quicksand_bold'
+      fontFamily: 'Quicksand-Bold'
     },
     content: {
       fontSize: 14,
       textAlign: 'center',
       marginTop: 2,
       color: '#FFFFFF',
-      fontFamily: 'quicksand_regular'
+      fontFamily: 'Quicksand-Regular'
     },
     year: {
        textAlign: 'center'

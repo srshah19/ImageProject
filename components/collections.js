@@ -212,14 +212,14 @@ var styles = StyleSheet.create({
       textAlign: 'center',
       color: '#FFFFFF',
       fontWeight: 'normal',
-      fontFamily: 'quicksand_bold'
+      fontFamily: 'Quicksand-Bold'
     },
     content: {
       fontSize: 14,
       textAlign: 'center',
       marginTop: 2,
       color: '#FFFFFF',
-      fontFamily: 'quicksand_regular'
+      fontFamily: 'Quicksand-Regular'
     },
     year: {
        textAlign: 'center'
@@ -238,7 +238,7 @@ var styles = StyleSheet.create({
       textAlign: 'center',
       marginTop: 5,
       color: '#FFFFFF',
-      fontFamily: 'quicksand_regular',
+      fontFamily: 'Quicksand-Regular',
       flex: 0.5,
       flexDirection: 'column'
     },

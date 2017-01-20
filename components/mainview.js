@@ -41,7 +41,7 @@ class MainView extends Component {
           <ScrollableTabView
             tabBarUnderlineColor="red"
             tabBarPosition="bottom"
-            tabBarTextStyle={{fontFamily: 'quicksand_regular', fontSize: 15}}
+            tabBarTextStyle={{fontFamily: 'Quicksand-Regular', fontSize: 15}}
             style={styles.tabDisplay}>
             <CuratedImg tabLabel="Curated" />
             <Collection tabLabel="Collections" />

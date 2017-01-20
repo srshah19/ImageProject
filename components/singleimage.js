@@ -113,7 +113,7 @@ var styles = StyleSheet.create({
       color: '#FFF',
       flex: 0.5,
       fontSize: 16,
-      fontFamily: 'quicksand_regular',
+      fontFamily: 'Quicksand-Regular',
     },
     toolbarTitle:{
       color:'#fff',
@@ -121,7 +121,7 @@ var styles = StyleSheet.create({
       fontWeight: 'normal',
       flex: 1,
       fontSize: 18,
-      fontFamily: 'quicksand_regular',
+      fontFamily: 'Quicksand-Regular',
       margin: 0,
       padding: 0
     },
