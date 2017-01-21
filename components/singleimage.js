@@ -58,7 +58,7 @@ class SingleImage extends React.Component{
                 activeOpacity={0.5}>
                 <Image source={{uri: this.props.data.img.urls.regular}}
                   style={styles.thumbnail}
-                  resizeMode='stretch' />
+                  resizeMode='contain' />
               </TouchableHighlight>
           </View>
           <View style={styles.quarterContainer}>
@@ -86,7 +86,7 @@ class SingleImage extends React.Component{
   }
 }
 
-var styles = StyleSheet.create({
+let styles = StyleSheet.create({
   mainContainer:{
       flex: 1,
       backgroundColor: '#000000',
@@ -113,7 +113,8 @@ var styles = StyleSheet.create({
       color: '#FFF',
       flex: 0.5,
       fontSize: 16,
-      fontFamily: 'quicksand_regular',
+      fontFamily: 'Quicksand-Regular',
+        margin: -5,
     },
     toolbarTitle:{
       color:'#fff',
@@ -121,7 +122,7 @@ var styles = StyleSheet.create({
       fontWeight: 'normal',
       flex: 1,
       fontSize: 18,
-      fontFamily: 'quicksand_regular',
+      fontFamily: 'Quicksand-Regular',
       margin: 0,
       padding: 0
     },

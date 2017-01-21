@@ -28,7 +28,7 @@ class SplashPage extends Component {
         return (
             <View style={{flex: 1, backgroundColor: 'red', alignItems: 'center', justifyContent: 'center'}}>
                 <Text
-                  style={{fontSize: 36,color: '#fff', fontFamily: 'quicksand_bold', textAlign: 'center'}}>
+                  style={{fontSize: 36,color: '#fff', fontFamily: 'Quicksand-Bold', textAlign: 'center'}}>
                   Welcome to UnSplash!
                 </Text>
             </View>
