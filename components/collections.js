@@ -7,13 +7,7 @@ import React, {
     Component,
 } from 'react';
 
-import Firebase from 'firebase';
-
-// Spinner to show Loading
-import Spinner from 'react-native-loading-spinner-overlay';
-
 import {
-    AppRegistry,
     Alert,
     Image,
     ListView,
@@ -33,14 +27,12 @@ import {
 import CollectionsList from './collectionlist.js';
 import CuratedSingleImg from './singleimage.js';
 
-var cacheResults = {
+let cacheResults = {
   data: {
     'results': [],
   }
-}
-
-var ScrollableTabView = require('react-native-scrollable-tab-view');
-var _navigatorCollections; // we fill this up upon on first navigation.
+};
+let _navigatorCollections; // we fill this up upon on first navigation.
 
 BackAndroid.addEventListener('hardwareBackPress', () => {
   if(_navigatorCollections){
@@ -57,7 +49,7 @@ const API_KEY = "79990a4b9b7eb74767c53ed17a039d2046a191f9a4fc33bd853ad272b7e4d19
 
 String.prototype.capitalizeFirstLetter = function() {
     return this.charAt(0).toUpperCase() + this.slice(1);
-}
+};
 
 class Collections extends Component {
     constructor(props) {
@@ -111,7 +103,7 @@ class Collections extends Component {
         this.setState({
           loaded: false,
           refreshing: true,
-        })
+        });
         this.fetchData();
     }
 
@@ -187,7 +179,7 @@ class InitialCollections extends Component {
       }
 }
 
-var styles = StyleSheet.create({
+let styles = StyleSheet.create({
     container: {
       flex: 1,
       flexDirection: 'column',

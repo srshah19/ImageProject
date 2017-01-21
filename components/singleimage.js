@@ -86,7 +86,7 @@ class SingleImage extends React.Component{
   }
 }
 
-var styles = StyleSheet.create({
+let styles = StyleSheet.create({
   mainContainer:{
       flex: 1,
       backgroundColor: '#000000',
@@ -114,6 +114,7 @@ var styles = StyleSheet.create({
       flex: 0.5,
       fontSize: 16,
       fontFamily: 'Quicksand-Regular',
+        margin: -5,
     },
     toolbarTitle:{
       color:'#fff',

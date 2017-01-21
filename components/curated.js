@@ -25,11 +25,14 @@ import {
     windowSize,
     TouchableOpacity,
     ToastAndroid,
+    Dimensions,
 } from 'react-native';
 
 import CuratedSingleImg from './singleimage.js';
 import Modal from './modal.js';
 const RNFS = require('react-native-fs');
+
+/* RNFS options: [PicturesDirectoryPath,CachesDirectoryPath,DocumentDirectoryPath  ]*/
 
 let cacheResults = {
   data: {
@@ -38,6 +41,7 @@ let cacheResults = {
 };
 
 let _navigator; // we fill this up upon on first navigation.
+let {height, width} = Dimensions.get('window');
 
 BackAndroid.addEventListener('hardwareBackPress', () => {
   if (_navigator.getCurrentRoutes().length === 1  ) {
@@ -64,7 +68,7 @@ class CuratedImg extends Component {
             loaded: false,
             count: 1,
             refreshing: false,
-            path: RNFS.PicturesDirectoryPath + '/Snehal',
+            path: RNFS.ExternalStorageDirectoryPath+'/Pictures/Unsplash',
             modalOpen: false,
         };
         this.REQUEST_URL = 'https://api.unsplash.com/photos/curated/?client_id='+API_KEY+'&per_page=5';
@@ -115,21 +119,25 @@ class CuratedImg extends Component {
     testSaveImage(){
         let DownloadFileOptions = {
             fromUrl: this.state.imgInfo['urls']['full'],          // URL to download file from
-            toFile: this.state.path+'/'+this.state.imgInfo['id']+'.jpeg',           // Local filesystem path to save the file to
+            toFile: this.state.path+'/'+this.state.imgInfo['id']+'.jpg',           // Local filesystem path to save the file to
             background: true,
         };
-        RNFS.exists(this.state.path).then((res) => {
+        let dirPath = {
+            path: this.state.path,
+            that: this
+        };
+        RNFS.exists(dirPath['path']).then((res) => {
             if(res){
                 RNFS.downloadFile(DownloadFileOptions).promise.then((data) => {
                     console.log(data);
-                    this.setState({modalOpen: false});
+                    dirPath['that'].setState({modalOpen: false});
                     ToastAndroid.show('Image successfully downloaded', ToastAndroid.LONG)
                 });
             } else{
-                RNFS.mkdir(this.state.path)
+                RNFS.mkdir(dirPath['path'])
                     .then(() => {
                         RNFS.downloadFile(DownloadFileOptions).promise.then((data) => {
-                            this.setState({modalOpen: false});
+                            dirPath['that'].setState({modalOpen: false});
                             ToastAndroid.show('Image successfully downloaded', ToastAndroid.LONG)
                         });
                     })
@@ -170,16 +178,15 @@ class CuratedImg extends Component {
                     modalDidClose={() => this.setState({modalOpen: false})}
                     style={{alignItems: 'center'}}>
                     <View>
-                        <Text style={{fontSize: 20, marginBottom: 10}}>Image Options</Text>
                         <TouchableOpacity
                             style={{margin: 5}}
                             onPress={this.testSaveImage.bind(this)}>
-                            <Text>Save Image</Text>
+                            <Text style={styles.modalText}>Save Image</Text>
                         </TouchableOpacity>
                         <TouchableOpacity
                             style={{margin: 5}}
                             onPress={() => this.setState({modalOpen: false})}>
-                            <Text>Close modal</Text>
+                            <Text style={styles.modalText}>Close modal</Text>
                         </TouchableOpacity>
                     </View>
                 </Modal>
@@ -196,7 +203,7 @@ class CuratedImg extends Component {
                     delayLongPress={800}
                     activeOpacity={0.5}>
                     <Image
-                      resizeMode='stretch'
+                      resizeMode='contain'
                       source={{uri: image.urls.regular}}
                       style={styles.thumbnail}
                     />
@@ -248,6 +255,7 @@ const styles = StyleSheet.create({
     },
   imageContainer: {
       flex: 1,
+      justifyContent: 'center',
   },
     title: {
       fontSize: 16,
@@ -267,9 +275,19 @@ const styles = StyleSheet.create({
     year: {
        textAlign: 'center'
     },
+    modalText:{
+        textAlign: "center",
+        fontSize: 18,
+        color: "#000",
+        margin: 10,
+    },
     thumbnail: {
-      width: 450,
-      height: 250
+        width: width/1.25,
+        height: 250,
+        margin: 0
+    },
+    Quicksand:{
+        fontFamily: "Quicksand-Regular"
     },
     listView: {
       paddingBottom: 20,
