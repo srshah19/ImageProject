@@ -7,8 +7,6 @@ import React, {
     Component,
 } from 'react';
 
-import Firebase from 'firebase';
-
 import {
     Alert,
     Image,
@@ -26,6 +24,9 @@ import {
     ScrollView,
 } from 'react-native';
 
+
+const RNFS = require('react-native-fs');
+
 class SingleImage extends React.Component{
 
   navBack() {
@@ -33,11 +34,13 @@ class SingleImage extends React.Component{
   }
 
   saveToCamera() {
-    CameraRoll.saveImageWithTag('https://images.unsplash.com/photo-1468476775582-6bede20f356f', function(data) {
-      console.log(data);
-    }, function(err) {
-      console.log(err);
-    });
+      fetch('https://images.unsplash.com/photo-1468476775582-6bede20f356f').then((resp) => {
+        RNFS.readFile(RNFS.CachesDirectoryPath+'/org.reactjs.native.example.Unsplash/fsCachedData/03AA51BA-64C9-4C5A-B0DE-9D9348B61DE1', 'base64').then((data) => {
+            CameraRoll.saveToCameraRoll(data, 'photo').then((data)=> {
+              console.log(data);
+            })
+        })
+      });
   }
 
   render() {
@@ -54,7 +57,7 @@ class SingleImage extends React.Component{
           </View>
           <View style={styles.threeQuarterContainer}>
             <TouchableHighlight style={styles.imageContainer}
-                onPress={() => Linking.openURL('https://unsplash.com/photos/'+this.props.data.img.id+'')}
+                onPress={this.saveToCamera}
                 activeOpacity={0.5}>
                 <Image source={{uri: this.props.data.img.urls.regular}}
                   style={styles.thumbnail}

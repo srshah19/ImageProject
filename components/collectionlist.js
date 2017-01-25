@@ -171,7 +171,7 @@ class Collections extends Component {
     }
 }
 
-var styles = StyleSheet.create({
+let styles = StyleSheet.create({
     container: {
       flex: 1,
       flexDirection: 'column',

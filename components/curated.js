@@ -158,6 +158,7 @@ class CuratedImg extends Component {
     render() {
         return (
             <View style={{paddingTop: 20, backgroundColor: '#000'}}>
+                <Text style={styles.title}>Curated View</Text>
                 <ListView
                     refreshControl={
                       <RefreshControl
@@ -243,7 +244,7 @@ const styles = StyleSheet.create({
       flexDirection: 'column',
       justifyContent: 'center',
       alignItems: 'center',
-      backgroundColor: 'transparent',
+      backgroundColor: '#000',
       margin: 10,
       padding: 10,
       borderBottomWidth: 1,
@@ -304,7 +305,7 @@ const styles = StyleSheet.create({
       width: 300
     },
     toolbarDisplay: {
-      backgroundColor: '#8c8c8c',
+      backgroundColor: '#000',
       height: 50,
       margin: 0,
       padding: 0,

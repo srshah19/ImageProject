@@ -53,7 +53,7 @@ class MainView extends Component {
 
 const styles = StyleSheet.create({
   tabDisplay: {
-    marginBottom: 0,
+    marginBottom: -2,
   }
 });
 
