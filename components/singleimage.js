@@ -7,8 +7,6 @@ import React, {
     Component,
 } from 'react';
 
-import Firebase from 'firebase';
-
 import {
     Alert,
     Image,
@@ -24,138 +22,191 @@ import {
     Navigator,
     CameraRoll,
     ScrollView,
+    Dimensions,
+    TouchableOpacity,
+    ToastAndroid,
+    Platform,
 } from 'react-native';
 
-class SingleImage extends React.Component{
+let {height, width} = Dimensions.get('window');
+import Modal from './modal.js';
+const RNFS = require('react-native-fs');
 
-  navBack() {
-    this.props.navigator.pop();
-  }
+class SingleImage extends React.Component {
 
-  saveToCamera() {
-    CameraRoll.saveImageWithTag('https://images.unsplash.com/photo-1468476775582-6bede20f356f', function(data) {
-      console.log(data);
-    }, function(err) {
-      console.log(err);
-    });
-  }
+    constructor(props) {
+        super(props);
+        this.state = {
+            path: (Platform.OS === 'ios') ? RNFS.DocumentDirectoryPath + '/Unsplash' : RNFS.ExternalStorageDirectoryPath + '/Pictures/Unsplash',
+            modalOpen: false,
+        }
+    }
 
-  render() {
-    return (
-      <ScrollView style={styles.mainContainer}>
-      <View style={styles.container}>
-          <View style={styles.toolbar}>
-            <TouchableHighlight onPress={this.navBack.bind(this)}>
-              <Image
-                source={require('../assets/images/left-arrow.png')}
-                style={styles.smallIcon} />
-            </TouchableHighlight>
-            <Text style={styles.toolbarBack} onPress={this.navBack.bind(this)}>Back</Text>
-          </View>
-          <View style={styles.threeQuarterContainer}>
-            <TouchableHighlight style={styles.imageContainer}
-                onPress={() => Linking.openURL('https://unsplash.com/photos/'+this.props.data.img.id+'')}
-                activeOpacity={0.5}>
-                <Image source={{uri: this.props.data.img.urls.regular}}
-                  style={styles.thumbnail}
-                  resizeMode='contain' />
-              </TouchableHighlight>
-          </View>
-          <View style={styles.quarterContainer}>
-            <View style={styles.portfolioDetail}>
-              <Image
-                source={{uri: this.props.data.img.user.profile_image.medium}}
-                style={styles.profileImage} />
-                <View style={styles.halfContainer}>
-                  <Text>
-                    <Text style={styles.toolbarTitle}
-                      onPress={() => Linking.openURL(this.props.data.img.user.portfolio_url)}>
-                      By: {this.props.data.img.user.name.capitalizeFirstLetter()}
-                    </Text>
-                    <Text style={styles.toolbarTitle}>
-                      {"\n"}
-                      {this.props.data.img.likes} Likes
-                    </Text>
-                  </Text>
-                </View>
+    navBack() {
+        this.props.navigator.pop();
+    }
+
+    testSaveImage() {
+        let DownloadFileOptions = {
+            fromUrl: this.state.imgInfo['urls']['full'],          // URL to download file from
+            toFile: this.state.path + '/' + this.state.imgInfo['id'] + '.jpg',           // Local filesystem path to save the file to
+            background: true,
+        };
+        let dirPath             = {
+            path: this.state.path,
+            that: this
+        };
+        RNFS.exists(dirPath['path']).then((res) => {
+            if (res) {
+                RNFS.downloadFile(DownloadFileOptions).promise.then((data) => {
+                    dirPath['that'].setState({modalOpen: false});
+                    ToastAndroid.show('Image successfully downloaded', ToastAndroid.LONG)
+                });
+            } else {
+                RNFS.mkdir(dirPath['path'])
+                    .then(() => {
+                        RNFS.downloadFile(DownloadFileOptions).promise.then((data) => {
+                            dirPath['that'].setState({modalOpen: false});
+                            ToastAndroid.show('Image successfully downloaded', ToastAndroid.LONG)
+                        });
+                    })
+            }
+        }).catch(() => {
+            this.setState({modalOpen: false});
+            ToastAndroid.show('Image downloaded unsuccessful. Please close app and try again.', ToastAndroid.LONG)
+        });
+    }
+
+    render() {
+        return (
+            <View style={styles.mainContainer}>
+                <TouchableHighlight
+                    style={styles.container}
+                    onLongPress={() => this.setState({modalOpen: true, imgInfo: this.props.data.img})}
+                    delayLongPress={800}
+                    activeOpacity={0.5}>
+                    <Image
+                        style={styles.backdrop}
+                        source={{uri: this.props.data.img.urls.regular}}>
+                        <View style={styles.backdropView}>
+                            <Modal
+                                offset={0}
+                                open={this.state.modalOpen}
+                                modalDidClose={() => this.setState({modalOpen: false})}
+                                style={{alignItems: 'center'}}>
+                                <View>
+                                    <TouchableOpacity
+                                        style={{margin: 5}}
+                                        onPress={this.testSaveImage.bind(this)}>
+                                        <Text style={styles.modalText}>Save Image</Text>
+                                    </TouchableOpacity>
+                                    <TouchableOpacity
+                                        style={{margin: 5}}
+                                        onPress={() => this.setState({modalOpen: false})}>
+                                        <Text style={styles.modalText}>Close modal</Text>
+                                    </TouchableOpacity>
+                                </View>
+                            </Modal>
+                            <View style={styles.toolbar}>
+                                <TouchableHighlight onPress={this.navBack.bind(this)}>
+                                    <Image
+                                        source={require('../assets/images/left-arrow.png')}
+                                        style={styles.smallIcon}/>
+                                </TouchableHighlight>
+                                <Text style={styles.toolbarBack} onPress={this.navBack.bind(this)}>Back</Text>
+                            </View>
+                            <Text style={styles.toolbar}>
+                                <Text style={styles.toolbarTitle}
+                                      onPress={() => Linking.openURL(this.props.data.img.user.portfolio_url)}>
+                                    By: {this.props.data.img.user.name.capitalizeFirstLetter()}
+                                </Text>
+                                <Text style={styles.toolbarTitle}>
+                                    {"\n"}
+                                    {this.props.data.img.likes} Likes
+                                </Text>
+                            </Text>
+                        </View>
+                    </Image>
+                </TouchableHighlight>
             </View>
-          </View>
-        </View>
-      </ScrollView>
-    );
-  }
+        );
+    }
 }
 
 let styles = StyleSheet.create({
-  mainContainer:{
-      flex: 1,
-      backgroundColor: '#000000',
-      flexDirection: 'column'
-  },
-    container: {
-      marginRight: 10,
-      marginLeft: 10,
-      marginTop: 0,
-      marginBottom: 5,
+    mainContainer: {
+        flex: 1,
+        backgroundColor: '#000000',
+        flexDirection: 'column'
     },
-    thumbnail: {
-      width: 450,
-      height: 250
-    },
-    toolbar:{
-      backgroundColor: '#000000',
-      paddingTop:30,
-      paddingBottom:10,
-      flexDirection:'row',
-      margin: 10
+    toolbar: {
+        backgroundColor: 'rgba(0,0,0,0.75)',
+        flexDirection: 'row',
+        padding: 20
     },
     toolbarBack: {
-      color: '#FFF',
-      flex: 0.5,
-      fontSize: 16,
-      fontFamily: 'Quicksand-Regular',
-        margin: -5,
+        color: '#FFF',
+        flex: 1,
+        fontSize: 16,
+        fontFamily: 'Quicksand-Regular',
+        margin: -2,
     },
-    toolbarTitle:{
-      color:'#fff',
-      textAlign:'left',
-      fontWeight: 'normal',
-      flex: 1,
-      fontSize: 18,
-      fontFamily: 'Quicksand-Regular',
-      margin: 0,
-      padding: 0
-    },
-    imageContainer: {
-      flex: 1,
-      alignItems: 'center',
+    toolbarTitle: {
+        color: '#fff',
+        textAlign: 'left',
+        fontWeight: 'normal',
+        flex: 1,
+        fontSize: 18,
+        fontFamily: 'Quicksand-Regular',
+        margin: 0,
+        padding: 0
     },
     profileImage: {
-      width: 64,
-      borderRadius: 96,
-      height: 64,
-      marginRight: 10,
-    },
-    halfContainer:{
-      flex: 0.5,
-      margin: 10
-    },
-    quarterContainer: {
-      flex: 0.25
-    },
-    threeQuarterContainer: {
-      flex: 0.75,
-      marginBottom: 10,
-    },
-    portfolioDetail: {
-      flex: 1,
-      flexDirection: 'row'
+        width: 64,
+        borderRadius: 96,
+        height: 64,
+        marginRight: 10,
     },
     smallIcon: {
-      width: 16,
-      height: 16,
-      marginLeft: 0,
-      marginRight: 5,
+        width: 16,
+        height: 16,
+        marginLeft: 0,
+        marginRight: 5,
+    },
+    container: {
+        flex: 1,
+        justifyContent: 'flex-start',
+        alignItems: 'center',
+        backgroundColor: '#000000',
+        width: width
+    },
+    backdrop: {
+        width: width,
+        height: height,
+        opacity: 0.75
+    },
+    backdropView: {
+        height: height,
+        width: width,
+        backgroundColor: 'rgba(0,0,0,0)',
+    },
+    headline: {
+        fontSize: 20,
+        textAlign: 'center',
+        backgroundColor: '#FFF',
+        color: 'black',
+        position: 'absolute',
+        top: height - 125,
+        alignItems: 'center',
+        justifyContent: 'center',
+        flex: 1,
+        width: width
+    },
+    modalText: {
+        textAlign: "center",
+        fontSize: 18,
+        color: "#000",
+        margin: 10,
     }
 });
 

@@ -1,6 +1,7 @@
 package com.imageproject;
 
 import com.facebook.react.ReactActivity;
+import com.joshblour.reactnativepermissions.ReactNativePermissionsPackage;
 
 public class MainActivity extends ReactActivity {
 

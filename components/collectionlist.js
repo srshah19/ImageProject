@@ -7,11 +7,6 @@ import React, {
     Component,
 } from 'react';
 
-import Firebase from 'firebase';
-
-// Spinner to show Loading
-import Spinner from 'react-native-loading-spinner-overlay';
-
 import {
     AppRegistry,
     Alert,
@@ -28,13 +23,15 @@ import {
     NetInfo,
     ScrollView,
     Navigator,
+    Dimensions,
 } from 'react-native';
 
-var cacheResults = {
+let cacheResults = {
   data: {
     'results': [],
   }
-}
+};
+let {height, width} = Dimensions.get('window');
 
 var ScrollableTabView = require('react-native-scrollable-tab-view');
 
@@ -133,20 +130,22 @@ class Collections extends Component {
 
     render() {
         return (
-            <ListView
-                refreshControl={
-                  <RefreshControl
-                      refreshing={this.state.refreshing}
-                      onRefresh={this.loadMore.bind(this)}
-                  />
-                }
-                dataSource={this.state.dataSource}
-                renderRow={this.renderMovie.bind(this)}
-                style={styles.listView}
-                renderHeader={() => this.getPageHeader()}
-                onEndReachedThreshold={10}
-                onEndReached={this.loadMore.bind(this)}>
-            </ListView>
+          <View style={{paddingTop: 20, backgroundColor: '#000'}}>
+              <Text style={styles.title}>Collections List View</Text>
+              <ListView
+                  refreshControl={
+                    <RefreshControl
+                        refreshing={this.state.refreshing}
+                        onRefresh={this.loadMore.bind(this)}
+                    />
+                  }
+                  dataSource={this.state.dataSource}
+                  renderRow={this.renderMovie.bind(this)}
+                  style={styles.listView}
+                  onEndReachedThreshold={10}
+                  onEndReached={this.loadMore.bind(this)}>
+              </ListView>
+          </View>
         );
     }
 
@@ -171,13 +170,13 @@ class Collections extends Component {
     }
 }
 
-var styles = StyleSheet.create({
+let styles = StyleSheet.create({
     container: {
       flex: 1,
       flexDirection: 'column',
       justifyContent: 'center',
       alignItems: 'center',
-      backgroundColor: 'transparent',
+      backgroundColor: '#000',
       margin: 10,
       padding: 10,
       borderBottomWidth: 1,
@@ -189,6 +188,7 @@ var styles = StyleSheet.create({
     },
   imageContainer: {
       flex: 1,
+      justifyContent: 'center',
   },
     title: {
       fontSize: 16,
@@ -209,8 +209,9 @@ var styles = StyleSheet.create({
        textAlign: 'center'
     },
     thumbnail: {
-      width: 450,
-      height: 250
+      width: width/1.25,
+      height: 250,
+      margin: 0
     },
     listView: {
       paddingBottom: 20,
