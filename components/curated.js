@@ -254,7 +254,7 @@ const styles = StyleSheet.create({
       flex: 1,
       marginTop: 10
     },
-  imageContainer: {
+    imageContainer: {
       flex: 1,
       justifyContent: 'center',
   },

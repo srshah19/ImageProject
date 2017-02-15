@@ -22,6 +22,7 @@ import {
     NetInfo,
     Navigator,
     BackAndroid,
+    Dimensions,
 } from 'react-native';
 
 import CollectionsList from './collectionlist.js';
@@ -33,6 +34,7 @@ let cacheResults = {
   }
 };
 let _navigatorCollections; // we fill this up upon on first navigation.
+let {height, width} = Dimensions.get('window');
 
 BackAndroid.addEventListener('hardwareBackPress', () => {
   if(_navigatorCollections){
@@ -116,19 +118,22 @@ class Collections extends Component {
 
     render() {
         return (
-            <ListView
-                refreshControl={
-                  <RefreshControl
-                      refreshing={this.state.refreshing}
-                      onRefresh={this.loadMore.bind(this)}
-                  />
-                }
-                dataSource={this.state.dataSource}
-                renderRow={this.renderCollection.bind(this)}
-                style={styles.listView}
-                onEndReachedThreshold={10}
-                onEndReached={this.loadMore.bind(this)}>
-            </ListView>
+          <View style={{paddingTop: 20, backgroundColor: '#000'}}>
+              <Text style={styles.title}>Collections List View</Text>
+              <ListView
+                  refreshControl={
+                    <RefreshControl
+                        refreshing={this.state.refreshing}
+                        onRefresh={this.loadMore.bind(this)}
+                    />
+                  }
+                  dataSource={this.state.dataSource}
+                  renderRow={this.renderCollection.bind(this)}
+                  style={styles.listView}
+                  onEndReachedThreshold={10}
+                  onEndReached={this.loadMore.bind(this)}>
+              </ListView>
+          </View>
         );
     }
 
@@ -197,6 +202,7 @@ let styles = StyleSheet.create({
     },
   imageContainer: {
       flex: 1,
+      justifyContent: 'center'
   },
     title: {
       fontSize: 16,
@@ -217,8 +223,9 @@ let styles = StyleSheet.create({
        textAlign: 'center'
     },
     thumbnail: {
-      width: 450,
-      height: 250
+      width: width/1.25,
+      height: 250,
+      margin: 0
     },
     listView: {
       paddingBottom: 20,
