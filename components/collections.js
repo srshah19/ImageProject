@@ -92,7 +92,7 @@ class Collections extends Component {
                 });
             })
             .catch((error) => {
-              Alert.alert('Network Error', 'API request has maxed out. Try again in the next hour.')
+              Alert.alert('Network Error', error.message)
             })
             .done();
     }
@@ -119,7 +119,7 @@ class Collections extends Component {
     render() {
         return (
           <View style={{paddingTop: 20, backgroundColor: '#000'}}>
-              <Text style={styles.title}>Collections List View</Text>
+              <Text style={styles.title}>Collections</Text>
               <ListView
                   refreshControl={
                     <RefreshControl

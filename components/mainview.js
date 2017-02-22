@@ -89,12 +89,13 @@ class MainView extends Component {
     render() {
         return (
             <ScrollableTabView
+                initialPage={0}
                 tabBarUnderlineColor="red"
                 tabBarPosition="bottom"
                 tabBarTextStyle={{fontFamily: 'Quicksand-Regular', fontSize: 15}}
                 style={styles.tabDisplay}>
-                <CuratedImg tabLabel="Curated"/>
                 <Collection tabLabel="Collections"/>
+                <CuratedImg tabLabel="Curated"/>
             </ScrollableTabView>
         );
     }

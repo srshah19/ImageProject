@@ -32,9 +32,9 @@ import {
 
 import CuratedSingleImg from './singleimage.js';
 import Modal from './modal.js';
-const RNFS = require('react-native-fs');
+import StoreImage from './Services/storeImage';
 
-/* RNFS options: [PicturesDirectoryPath,CachesDirectoryPath,DocumentDirectoryPath  ]*/
+/* Rnfs options: [PicturesDirectoryPath,CachesDirectoryPath,DocumentDirectoryPath  ]*/
 
 let cacheResults = {
     data: {
@@ -70,7 +70,6 @@ class CuratedImg extends Component {
             loaded: false,
             count: 1,
             refreshing: false,
-            path: (Platform.OS === 'android') ? RNFS.ExternalStorageDirectoryPath + '/Pictures/Unsplash' : RNFS.CachesDirectoryPath,
             modalOpen: false,
         };
         this.REQUEST_URL = 'https://api.unsplash.com/photos/curated/?client_id=' + API_KEY + '&per_page=5';
@@ -117,45 +116,10 @@ class CuratedImg extends Component {
         this.fetchData();
     }
 
-    testSaveImage() {
-        let DownloadFileOptions = {
-            fromUrl: this.state.imgInfo['urls']['full'],          // URL to download file from
-            toFile: this.state.path + '/' + this.state.imgInfo['id'] + '.jpg',           // Local filesystem path to save the file to
-            background: true,
-        };
-        let dirPath             = {
-            path: this.state.path,
-            that: this
-        };
-        RNFS.exists(dirPath['path']).then((res) => {
-            if (res) {
-                RNFS.downloadFile(DownloadFileOptions).promise.then((data) => {
-                    console.log(data);
-                    dirPath['that'].setState({modalOpen: false});
-                    if(Platform.OS === 'ios'){
-                        let cacheImagePath = DownloadFileOptions.toFile;
-                        console.log(cacheImagePath);
-                        let promise = CameraRoll.saveToCameraRoll(cacheImagePath, 'photo');
-                        promise.then(function(result) {
-                            console.log('save succeeded ' + result);
-                        }).catch(function(error) {
-                            console.log('save failed ' + error);
-                        });
-                    }
-                    ToastAndroid.show('Image successfully downloaded', ToastAndroid.LONG)
-                });
-            } else {
-                RNFS.mkdir(dirPath['path'])
-                    .then(() => {
-                        RNFS.downloadFile(DownloadFileOptions).promise.then((data) => {
-                            dirPath['that'].setState({modalOpen: false});
-                            ToastAndroid.show('Image successfully downloaded', ToastAndroid.LONG)
-                        });
-                    })
-            }
-        }).catch(() => {
-            this.setState({modalOpen: false});
-            ToastAndroid.show('Image downloaded unsuccessful. Please close app and try again.', ToastAndroid.LONG)
+    saveImage(){
+        let storeImage = new StoreImage();
+        storeImage.download(this.state.imgInfo).then(() => {
+            this.setState({modalOpen: false})
         });
     }
 
@@ -192,7 +156,7 @@ class CuratedImg extends Component {
                     <View>
                         <TouchableOpacity
                             style={{margin: 5}}
-                            onPress={this.testSaveImage.bind(this)}>
+                            onPress={this.saveImage.bind(this)}>
                             <Text style={styles.modalText}>Save Image</Text>
                         </TouchableOpacity>
                         <TouchableOpacity
