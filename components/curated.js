@@ -3,38 +3,32 @@
  * https://github.com/facebook/react-native
  */
 
-import React, {
-    Component,
-} from 'react';
+import React, {Component} from 'react';
 
 import {
-    AppRegistry,
     Alert,
     Image,
     ListView,
     Linking,
-    StyleSheet,
     Text,
     View,
     TouchableHighlight,
     ToolbarAndroid,
     RefreshControl,
-    ProgressBar,
     Navigator,
     BackAndroid,
-    windowSize,
     TouchableOpacity,
-    ToastAndroid,
-    Dimensions,
-    Platform,
-    CameraRoll,
 } from 'react-native';
 
+/**
+ * Import all application specific components here
+ */
 import CuratedSingleImg from './singleimage.js';
 import Modal from './modal.js';
-import StoreImage from './Services/storeImage';
-
-/* Rnfs options: [PicturesDirectoryPath,CachesDirectoryPath,DocumentDirectoryPath  ]*/
+import StoreImage from './Services/StoreImage';
+import styles from './Styles/ImgList';
+import {ApplicationStyles} from './Themes/';
+import * as Config from './Services/Configuration';
 
 let cacheResults = {
     data: {
@@ -43,7 +37,6 @@ let cacheResults = {
 };
 
 let _navigator; // we fill this up upon on first navigation.
-let {height, width} = Dimensions.get('window');
 
 BackAndroid.addEventListener('hardwareBackPress', () => {
     if (_navigator.getCurrentRoutes().length === 1) {
@@ -52,9 +45,6 @@ BackAndroid.addEventListener('hardwareBackPress', () => {
     _navigator.pop();
     return true;
 });
-
-// Shhh.. This is a secret Key! Keep this safe :D
-const API_KEY = "79990a4b9b7eb74767c53ed17a039d2046a191f9a4fc33bd853ad272b7e4d199";
 
 String.prototype.capitalizeFirstLetter = function () {
     return this.charAt(0).toUpperCase() + this.slice(1);
@@ -71,8 +61,9 @@ class CuratedImg extends Component {
             count: 1,
             refreshing: false,
             modalOpen: false,
+            api_key: Config.getConfiguration('APP_ID')
         };
-        this.REQUEST_URL = 'https://api.unsplash.com/photos/curated/?client_id=' + API_KEY + '&per_page=5';
+        this.REQUEST_URL = 'https://api.unsplash.com/photos/curated/?client_id=' + this.state.api_key + '&per_page=5';
     }
 
     componentDidMount() {
@@ -116,7 +107,18 @@ class CuratedImg extends Component {
         this.fetchData();
     }
 
-    saveImage(){
+    openAuthorLink(img) {
+        let authorUrl = img.user['portfolio_url'] || false;
+        Linking.canOpenURL(authorUrl).then(supported => {
+            if (supported) {
+                Linking.openURL(authorUrl);
+            } else {
+                Alert.alert('Error Occurred', 'Sorry we could not open the user profile.')
+            }
+        });
+    }
+
+    saveImage() {
         let storeImage = new StoreImage();
         storeImage.download(this.state.imgInfo).then(() => {
             this.setState({modalOpen: false})
@@ -132,8 +134,10 @@ class CuratedImg extends Component {
 
     render() {
         return (
-            <View style={{paddingTop: 20, backgroundColor: '#000'}}>
-                <Text style={styles.title}>Curated View</Text>
+            <View style={ApplicationStyles.screen.container}>
+                <View style={styles.toolbar}>
+                    <Text style={[styles.headerTitle, styles.toolbarTitle]}>Curated Images</Text>
+                </View>
                 <ListView
                     refreshControl={
                         <RefreshControl
@@ -185,7 +189,10 @@ class CuratedImg extends Component {
                     />
                 </TouchableHighlight>
                 <View style={styles.rightContainer}>
-                    <Text style={styles.title}>{image.user.username.capitalizeFirstLetter()}</Text>
+                    <TouchableOpacity
+                        onPress={this.openAuthorLink.bind(this, image)}>
+                        <Text style={[styles.linkText, styles.genericText]}>{image.user.username.capitalizeFirstLetter()}</Text>
+                    </TouchableOpacity>
                     <Text style={styles.content}>Likes: {image.likes}</Text>
                 </View>
             </View>
@@ -212,83 +219,5 @@ class InitialCurated extends Component {
         }
     }
 }
-
-const styles = StyleSheet.create({
-    container: {
-        flex: 1,
-        flexDirection: 'column',
-        justifyContent: 'center',
-        alignItems: 'center',
-        backgroundColor: '#000',
-        margin: 10,
-        padding: 10,
-        borderBottomWidth: 1,
-        borderBottomColor: 'gray'
-    },
-    rightContainer: {
-        flex: 1,
-        marginTop: 10
-    },
-    imageContainer: {
-        flex: 1,
-        justifyContent: 'center',
-    },
-    title: {
-        fontSize: 16,
-        marginBottom: 3,
-        textAlign: 'center',
-        color: '#FFFFFF',
-        fontWeight: 'normal',
-        fontFamily: 'Quicksand-Bold'
-    },
-    content: {
-        fontSize: 14,
-        textAlign: 'center',
-        marginTop: 2,
-        color: '#FFFFFF',
-        fontFamily: 'Quicksand-Regular'
-    },
-    year: {
-        textAlign: 'center'
-    },
-    modalText: {
-        textAlign: "center",
-        fontSize: 18,
-        color: "#000",
-        margin: 10,
-    },
-    thumbnail: {
-        width: width / 1.25,
-        height: 250,
-        margin: 0
-    },
-    Quicksand: {
-        fontFamily: "Quicksand-Regular"
-    },
-    listView: {
-        paddingBottom: 20,
-        marginBottom: 0,
-        backgroundColor: '#000000'
-    },
-    overlay: {
-        flex: 1,
-        position: 'absolute',
-        left: 0,
-        top: 0,
-        opacity: 0.5,
-        backgroundColor: 'black',
-        width: 300
-    },
-    toolbarDisplay: {
-        backgroundColor: '#000',
-        height: 50,
-        margin: 0,
-        padding: 0,
-    },
-    headerContainer: {
-        flex: 1,
-        flexDirection: 'column'
-    },
-});
 
 export default InitialCurated;
