@@ -14,7 +14,7 @@ import FileStorage from 'react-native-fs';
 class StoreImage {
     constructor() {
         this.state = {
-            path: (Platform.OS === 'android') ? FileStorage.ExternalStorageDirectoryPath + '/Pictures/OctaLabs' : FileStorage.CachesDirectoryPath,
+            path: (Platform.OS === 'android') ? FileStorage.PicturesDirectoryPath + '/AwsmSnap' : FileStorage.CachesDirectoryPath,
         }
     }
 
@@ -37,11 +37,14 @@ class StoreImage {
                             let promise = CameraRoll.saveToCameraRoll(cacheImagePath, 'photo');
                             promise.then(function(result) {
                                 resolve(result);
+                                Alert.alert('Image saved to Library', 'Go check it out :)');
                             }).catch(function(error) {
                                 reject(error);
                             });
+                        } else {
+                            Alert.alert('Image saved to Library', 'Go check it out :)');
+                            resolve();
                         }
-                        Alert.alert('Image saved to Library', 'Go check it out :)')
                     });
                 } else {
                     FileStorage.mkdir(dirPath['path'])

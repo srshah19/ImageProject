@@ -34,6 +34,9 @@ class SplashPage extends Component {
                   Welcome!
                     {"\n"}
                 </Text>
+                <Text style={{fontSize: 16,color: '#fff', fontFamily: 'Quicksand-Bold', textAlign: 'center'}}>
+                    (Credits: Unsplash)
+                </Text>
             </View>
         );
     }
