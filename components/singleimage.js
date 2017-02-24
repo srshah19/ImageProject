@@ -69,14 +69,14 @@ class SingleImage extends React.Component {
                         </TouchableOpacity>
                         <View style={[styles.halfContainer, {justifyContent: 'center'}]}>
                             <Text>
-                                <Text style={styles.genericText}>
+                                <Text style={[styles.content, styles.genericText]}>
                                     By: {this.props.data.img.user['name'].capitalizeFirstLetter()}
                                 </Text>
-                                <Text style={styles.genericText}>
+                                <Text style={[styles.content, styles.genericText]}>
                                     {"\n"}
                                     {this.props.data.img['likes']} Likes
                                 </Text>
-                                <Text style={styles.genericText}>
+                                <Text style={[styles.genericText, styles.content]}>
                                     {"\n"}
                                     Total Collections: {this.props.data.img.user['total_collections']}
                                 </Text>

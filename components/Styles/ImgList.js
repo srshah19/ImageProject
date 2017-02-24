@@ -42,14 +42,15 @@ export default StyleSheet.create({
     },
     rightContainer: {
         flex: 1,
-        marginTop: 10
+        marginTop: 10,
+        flexDirection: 'column'
     },
     imageContainer: {
         flex: 1,
         justifyContent: 'center',
     },
     genericText: {
-        fontSize: Fonts.size.h6,
+        fontSize: Fonts.size.input,
         marginBottom: 3,
         textAlign: 'center',
         color: Colors.snow,
@@ -64,7 +65,7 @@ export default StyleSheet.create({
         fontSize: 14,
         textAlign: 'center',
         marginTop: 2,
-        color: '#FFFFFF',
+        color: Colors.snow,
         fontFamily: 'Quicksand-Regular'
     },
     year: {
@@ -148,7 +149,6 @@ export default StyleSheet.create({
         fontWeight: 'normal',
         fontFamily: 'Quicksand-Bold'
     },
-
     textContent: {
         fontSize: 14,
         textAlign: 'center',
@@ -187,4 +187,14 @@ export default StyleSheet.create({
         marginTop: 25,
         marginLeft: 10
     },
+    threeCol:{
+        paddingTop:30,
+        paddingBottom:10,
+        flexDirection:'row'
+    },
+    centering: {
+        alignItems: 'center',
+        justifyContent: 'center',
+        padding: 8,
+    }
 })
