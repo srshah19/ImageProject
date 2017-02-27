@@ -15,6 +15,7 @@ import {
     NetInfo,
     Navigator,
     BackAndroid,
+    ActivityIndicator,
 } from 'react-native';
 
 
@@ -26,6 +27,7 @@ import CuratedSingleImg from './singleimage.js';
 import styles from './Styles/ImgList';
 import {ApplicationStyles} from './Themes/';
 import * as Config from './Services/Configuration';
+import PhotoView from 'react-native-photo-view';
 
 let cacheResults = {
     data: {
@@ -45,9 +47,6 @@ BackAndroid.addEventListener('hardwareBackPress', () => {
     }
 });
 
-// Shhh.. This is a secret Key! Keep this safe :D
-const API_KEY = "79990a4b9b7eb74767c53ed17a039d2046a191f9a4fc33bd853ad272b7e4d199";
-
 String.prototype.capitalizeFirstLetter = function () {
     return this.charAt(0).toUpperCase() + this.slice(1);
 };
@@ -59,7 +58,7 @@ class Collections extends Component {
             dataSource: new ListView.DataSource({
                 rowHasChanged: (row1, row2) => row1 !== row2
             }),
-            loaded: false,
+            animating: false,
             count: 1,
             refreshing: false,
             api_key: Config.getConfiguration('APP_ID')
@@ -85,7 +84,7 @@ class Collections extends Component {
                 cacheResults.data['results'] = cacheResults.data['results'].concat(responseData);
                 this.setState({
                     dataSource: this.getDataSource(cacheResults.data['results']),
-                    loaded: true,
+                    animating: false,
                     count: this.state.count + 1,
                     refreshing: false,
                 });
@@ -102,7 +101,7 @@ class Collections extends Component {
 
     loadMore() {
         this.setState({
-            loaded: false,
+            animating: true,
             refreshing: true,
         });
         this.fetchData();
@@ -134,6 +133,12 @@ class Collections extends Component {
                     onEndReachedThreshold={10}
                     onEndReached={this.loadMore.bind(this)}>
                 </ListView>
+                <ActivityIndicator
+                    animating={this.state.animating}
+                    color="#900"
+                    style={[ApplicationStyles.screen.backgroundSpinner, {height: 120}]}
+                    size="large"
+                />
             </View>
         );
     }
@@ -141,15 +146,13 @@ class Collections extends Component {
     renderCollection(collection) {
         return (
             <View style={styles.container}>
-                <TouchableHighlight style={styles.imageContainer}
-                                    onPress={this.navCollectionList.bind(this, collection)}
-                                    activeOpacity={0.5}>
-                    <Image
-                        resizeMode='contain'
-                        source={{uri: collection.cover_photo.urls.regular}}
-                        style={styles.thumbnail}
-                    />
-                </TouchableHighlight>
+                <PhotoView
+                    source={{uri: collection['cover_photo']['urls'].regular}}
+                    minimumZoomScale={1}
+                    maximumZoomScale={4}
+                    androidScaleType="center"
+                    onTap={this.navCollectionList.bind(this, collection)}
+                    style={styles.thumbnail}/>
                 <View style={styles.rightContainer}>
                     <Text style={styles.title}>{collection.title.capitalizeFirstLetter()}</Text>
                     <Text style={styles.description}>{(collection.description) ? collection.description : 'N/A'}</Text>

@@ -20,16 +20,18 @@ import {
     ScrollView,
     Navigator,
     TouchableOpacity,
+    ActivityIndicator,
 } from 'react-native';
 
 /**
  * Import all application specific components here
  */
-import Modal from './modal.js';
+import PhotoView from 'react-native-photo-view';
 import StoreImage from './Services/StoreImage';
 import styles from './Styles/ImgList';
 import {ApplicationStyles} from './Themes/';
 import * as Config from './Services/Configuration';
+import Icon from 'react-native-vector-icons/FontAwesome';
 
 let cacheResults    = {
     data: {
@@ -48,7 +50,7 @@ class Collections extends Component {
             dataSource: new ListView.DataSource({
                 rowHasChanged: (row1, row2) => row1 !== row2
             }),
-            loaded: false,
+            animating: false,
             count: 1,
             refreshing: false,
             isLoadMore: false,
@@ -77,10 +79,13 @@ class Collections extends Component {
         );
     }
 
-    saveImage() {
+    saveImage(image) {
+        this.setState({
+            animating: true
+        });
         let storeImage = new StoreImage();
-        storeImage.download(this.state.imgInfo).then(() => {
-            this.setState({modalOpen: false})
+        storeImage.download(image).then(() => {
+            this.setState({animating: false});
         });
     }
 
@@ -94,7 +99,7 @@ class Collections extends Component {
                 cacheResults.data['results'] = cacheResults.data['results'].concat(responseData);
                 this.setState({
                     dataSource: this.getDataSource(cacheResults.data['results']),
-                    loaded: true,
+                    animating: false,
                     count: this.state.count + 1,
                     refreshing: false,
                     isLoadMore: true,
@@ -112,7 +117,7 @@ class Collections extends Component {
 
     loadMore() {
         this.setState({
-            loaded: false,
+            animating: true,
             refreshing: true,
             isLoadMore: true,
         });
@@ -164,25 +169,12 @@ class Collections extends Component {
                     onEndReachedThreshold={10}
                     onEndReached={this.loadMore.bind(this)}>
                 </ListView>
-                <Modal
-                    offset={0}
-                    open={this.state.modalOpen}
-                    modalDidOpen={() => console.log('modal did open')}
-                    modalDidClose={() => this.setState({modalOpen: false})}
-                    style={{alignItems: 'center'}}>
-                    <View>
-                        <TouchableOpacity
-                            style={{margin: 5}}
-                            onPress={this.saveImage.bind(this)}>
-                            <Text style={styles.modalText}>Save Image</Text>
-                        </TouchableOpacity>
-                        <TouchableOpacity
-                            style={{margin: 5}}
-                            onPress={() => this.setState({modalOpen: false})}>
-                            <Text style={styles.modalText}>Close modal</Text>
-                        </TouchableOpacity>
-                    </View>
-                </Modal>
+                <ActivityIndicator
+                    animating={this.state.animating}
+                    color="#900"
+                    style={[ApplicationStyles.screen.backgroundSpinner, {height: 120}]}
+                    size="large"
+                />
             </View>
         );
     }
@@ -190,23 +182,30 @@ class Collections extends Component {
     renderMovie(image) {
         return (
             <View style={styles.container}>
-                <TouchableHighlight style={styles.imageContainer}
-                                    onPress={this.navSingle.bind(this, image)}
-                                    onLongPress={() => this.setState({modalOpen: true, imgInfo: image})}
-                                    delayLongPress={800}
-                                    activeOpacity={0.5}>
-                    <Image
-                        resizeMode='contain'
-                        source={{uri: image.urls.regular}}
-                        style={styles.thumbnail}
-                    />
-                </TouchableHighlight>
-                <View style={styles.rightContainer}>
+                <PhotoView
+                    source={{uri: image['urls']['regular']}}
+                    minimumZoomScale={1}
+                    maximumZoomScale={4}
+                    androidScaleType="center"
+                    onTap={this.navSingle.bind(this, image)}
+                    style={styles.thumbnail}/>
+                <View style={styles.threeCol}>
+                    <Text style={[styles.content, styles.quarterContainer, {alignItems: 'flex-start', marginLeft: -10}]}>
+                        <Icon name="heart" size={18} color="#900" /> {image['likes']}
+                    </Text>
                     <TouchableOpacity
+                        style={styles.halfContainer}
                         onPress={this.openAuthorLink.bind(this, image)}>
-                        <Text style={[styles.linkText, styles.genericText]}>{image.user.username.capitalizeFirstLetter()}</Text>
+                        <Text
+                            style={[styles.linkText, styles.genericText]}>
+                            {image.user['username'].capitalizeFirstLetter()}
+                        </Text>
                     </TouchableOpacity>
-                    <Text style={styles.textContent}>Likes: {image.likes}</Text>
+                    <TouchableOpacity
+                        style={[styles.quarterContainer, {alignItems: 'flex-end'}]}
+                        onPress={this.saveImage.bind(this, image)}>
+                        <Icon name="download" size={20} color="#FFF" />
+                    </TouchableOpacity>
                 </View>
             </View>
         );

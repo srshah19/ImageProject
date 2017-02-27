@@ -14,7 +14,7 @@ import FileStorage from 'react-native-fs';
 class StoreImage {
     constructor() {
         this.state = {
-            path: (Platform.OS === 'android') ? FileStorage.PicturesDirectoryPath + '/AwsmSnap' : FileStorage.CachesDirectoryPath,
+            path: (Platform.OS === 'android') ? FileStorage.PicturesDirectoryPath + '/AwesomeSnap' : FileStorage.CachesDirectoryPath,
         }
     }
 

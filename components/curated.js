@@ -161,7 +161,7 @@ class CuratedImg extends Component {
                     animating={this.state.animating}
                     color="#900"
                     style={[ApplicationStyles.screen.backgroundSpinner, {height: 120}]}
-                    size={120}
+                    size="large"
                 />
             </View>
         );

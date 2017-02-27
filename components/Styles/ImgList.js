@@ -78,7 +78,7 @@ export default StyleSheet.create({
         margin: 10,
     },
     thumbnail: {
-        width: width / 1.25,
+        width: width,
         height: 250,
         margin: 0
     },
