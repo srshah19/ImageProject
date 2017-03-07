@@ -150,7 +150,6 @@ class Collections extends Component {
                     source={{uri: collection['cover_photo']['urls'].regular}}
                     minimumZoomScale={1}
                     maximumZoomScale={4}
-                    androidScaleType="center"
                     onTap={this.navCollectionList.bind(this, collection)}
                     style={styles.thumbnail}/>
                 <View style={styles.rightContainer}>

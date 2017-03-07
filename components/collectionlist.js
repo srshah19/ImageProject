@@ -32,6 +32,7 @@ import styles from './Styles/ImgList';
 import {ApplicationStyles} from './Themes/';
 import * as Config from './Services/Configuration';
 import Icon from 'react-native-vector-icons/FontAwesome';
+import Share, {ShareSheet, Button} from 'react-native-share';
 
 let cacheResults    = {
     data: {
@@ -48,7 +49,7 @@ class Collections extends Component {
         super(props);
         this.state       = {
             dataSource: new ListView.DataSource({
-                rowHasChanged: (row1, row2) => row1 !== row2
+                rowHasChanged: (row1, row2) => row1.id !== row2.id
             }),
             animating: false,
             count: 1,
@@ -77,6 +78,20 @@ class Collections extends Component {
         return (
             `${url}&page=${count}`
         );
+    }
+
+    shareImage(image){
+        let shareOptions = {
+            title: "Check out this image from Unsplash.com!",
+            message: "Shared via AwesomeSnap",
+            url: image.links['html'],
+            subject: "Check out this image. Shared via AwesomeSnap." //  for email
+        };
+        Share.open(shareOptions).then((data) => {
+            console.log(data)
+        }).catch((err) => {
+            err && console.log(err);
+        });
     }
 
     saveImage(image) {
@@ -186,26 +201,26 @@ class Collections extends Component {
                     source={{uri: image['urls']['regular']}}
                     minimumZoomScale={1}
                     maximumZoomScale={4}
-                    androidScaleType="center"
                     onTap={this.navSingle.bind(this, image)}
                     style={styles.thumbnail}/>
                 <View style={styles.threeCol}>
-                    <Text style={[styles.content, styles.quarterContainer, {alignItems: 'flex-start', marginLeft: -10}]}>
-                        <Icon name="heart" size={18} color="#900" /> {image['likes']}
+                    <Text style={[styles.content, styles.quarterContainer, {alignItems: 'flex-start'}]}>
+                        <Icon name="heart" size={30} color="#900" /> {image['likes']}
                     </Text>
                     <TouchableOpacity
-                        style={styles.halfContainer}
+                        style={styles.quarterContainer}
                         onPress={this.openAuthorLink.bind(this, image)}>
                         <Text
                             style={[styles.linkText, styles.genericText]}>
                             {image.user['username'].capitalizeFirstLetter()}
                         </Text>
                     </TouchableOpacity>
-                    <TouchableOpacity
-                        style={[styles.quarterContainer, {alignItems: 'flex-end'}]}
-                        onPress={this.saveImage.bind(this, image)}>
-                        <Icon name="download" size={20} color="#FFF" />
-                    </TouchableOpacity>
+                    <View style={[styles.quarterContainer, {alignItems: 'flex-end'}]}>
+                        <TouchableOpacity
+                            onPress={this.shareImage.bind(this, image)}>
+                            <Icon name="share-alt-square" size={30} color="#FFF" />
+                        </TouchableOpacity>
+                    </View>
                 </View>
             </View>
         );

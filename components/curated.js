@@ -31,6 +31,7 @@ import {ApplicationStyles} from './Themes/';
 import * as Config from './Services/Configuration';
 import PhotoView from 'react-native-photo-view';
 import Icon from 'react-native-vector-icons/FontAwesome';
+import Share, {ShareSheet, Button} from 'react-native-share';
 
 let cacheResults = {
     data: {
@@ -39,6 +40,7 @@ let cacheResults = {
 };
 
 let _navigator; // we fill this up upon on first navigation.
+
 
 BackAndroid.addEventListener('hardwareBackPress', () => {
     if (_navigator.getCurrentRoutes().length === 1) {
@@ -57,7 +59,7 @@ class CuratedImg extends Component {
         super(props);
         this.state       = {
             dataSource: new ListView.DataSource({
-                rowHasChanged: (row1, row2) => row1 !== row2
+                rowHasChanged: (row1, row2) => row1.id !== row2.id
             }),
             animating: false,
             count: 1,
@@ -121,6 +123,20 @@ class CuratedImg extends Component {
         });
     }
 
+    shareImage(image){
+        let shareOptions = {
+            title: "Check out this image from Unsplash.com!",
+            message: "Shared via AwesomeSnap",
+            url: image.links['html'],
+            subject: "Snehal is awesome!" //  for email
+        };
+        Share.open(shareOptions).then((data) => {
+            console.log(data)
+        }).catch((err) => {
+            err && console.log(err);
+        });
+    }
+
     saveImage(image) {
         this.setState({
             animating: true
@@ -174,12 +190,11 @@ class CuratedImg extends Component {
                         source={{uri: image['urls']['regular']}}
                         minimumZoomScale={1}
                         maximumZoomScale={4}
-                        androidScaleType="center"
                         onTap={this.navSingle.bind(this, image)}
                         style={styles.thumbnail}/>
                     <View style={styles.threeCol}>
                         <Text style={[styles.content, styles.quarterContainer, {alignItems: 'flex-start', marginLeft: -10}]}>
-                            <Icon name="heart" size={18} color="#900" /> {image['likes']}
+                            <Icon name="heart" size={30} color="#900" /> {image['likes']}
                         </Text>
                         <TouchableOpacity
                             style={styles.halfContainer}
@@ -191,8 +206,8 @@ class CuratedImg extends Component {
                         </TouchableOpacity>
                         <TouchableOpacity
                             style={[styles.quarterContainer, {alignItems: 'flex-end'}]}
-                            onPress={this.saveImage.bind(this, image)}>
-                            <Icon name="download" size={20} color="#FFF" />
+                            onPress={this.shareImage.bind(this, image)}>
+                            <Icon name="share-alt-square" size={30} color="#FFF" />
                         </TouchableOpacity>
                     </View>
                 </View>

@@ -19,6 +19,7 @@ import {
 
 import styles from './Styles/ImgList';
 import {ApplicationStyles} from './Themes/';
+import PhotoView from 'react-native-photo-view';
 
 class SingleImage extends React.Component {
 
@@ -43,18 +44,19 @@ class SingleImage extends React.Component {
     render() {
         return (
             <View style={ApplicationStyles.screen.container}>
-                <Image
-                    style={ApplicationStyles.screen.backgroundImage}
-                    source={{uri: this.props.data.img['urls']['regular']}} />
+                <PhotoView
+                    source={{uri: this.props.data.img['urls']['regular']}}
+                    minimumZoomScale={1}
+                    maximumZoomScale={4}
+                    style={ApplicationStyles.screen.backgroundImage} />
                 <View style={[styles.toolbar, {opacity: 0.7}]}>
-                    <TouchableHighlight
+                    <TouchableOpacity
                         style={styles.toolbarBack}
-                        onPress={this.navBack.bind(this)}
-                        activeOpacity={0}>
+                        onPress={this.navBack.bind(this)}>
                         <Image
                             source={require('../assets/images/left-arrow.png')}
                             style={styles.smallIcon}/>
-                    </TouchableHighlight>
+                    </TouchableOpacity>
                 </View>
                 <View style={styles.threeQuarterContainer}>
                 </View>
