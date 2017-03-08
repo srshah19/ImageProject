@@ -32,6 +32,7 @@ class SingleImage extends React.Component {
     }
 
     openAuthorLink(authorUrl) {
+        authorUrl = authorUrl || '';
         Linking.canOpenURL(authorUrl).then(supported => {
             if (supported) {
                 Linking.openURL(authorUrl);
