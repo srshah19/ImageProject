@@ -14,14 +14,14 @@ import FileStorage from 'react-native-fs';
 class StoreImage {
     constructor() {
         this.state = {
-            path: (Platform.OS === 'android') ? FileStorage.PicturesDirectoryPath + '/AwsmSnap' : FileStorage.CachesDirectoryPath,
+            path: (Platform.OS === 'android') ? FileStorage.PicturesDirectoryPath + '/AwesomeSnap/' : FileStorage.CachesDirectoryPath + '/',
         }
     }
 
     download(imgObj) {
         let DownloadFileOptions = {
             fromUrl: imgObj['urls']['full'],          // URL to download file from
-            toFile: this.state.path + '/' + imgObj['id'] + '.jpg',           // Local filesystem path to save the file to
+            toFile: this.state.path + imgObj['id'] + '.jpg',           // Local filesystem path to save the file to
             background: true,
         };
         let dirPath             = {
@@ -42,6 +42,9 @@ class StoreImage {
                                 reject(error);
                             });
                         } else {
+                            FileStorage.scanFile(dirPath['path']).then((data) =>{
+                                console.log(data);
+                            });
                             Alert.alert('Image saved to Library', 'Go check it out :)');
                             resolve();
                         }
